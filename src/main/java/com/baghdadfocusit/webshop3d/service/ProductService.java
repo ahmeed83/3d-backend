@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -71,6 +72,18 @@ public class ProductService {
 
     public void deleteProduct(String productId) {
         productRepository.deleteById(UUID.fromString(productId));
+    }
+
+    public Page<Product> getProductsByCategoryId(Optional<String> categoryId,
+                                                 Optional<Integer> page,
+                                                 Optional<String> sortBy) {
+        return productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
+                                                           PageRequest.of(page.orElse(0), 5, Direction.ASC,
+                                                                          sortBy.orElse("name")));
+    }
+
+    public List<Product> getRecommendedProducts() {
+        return productRepository.findProductsByRecommendedTrue();
     }
 
     public String createProductAndGetProductName(ProductJsonRequest productJson) {

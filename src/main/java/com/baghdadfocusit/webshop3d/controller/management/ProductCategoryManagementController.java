@@ -30,6 +30,12 @@ public class ProductCategoryManagementController {
         this.categoryService = categoryService;
     }
 
+    @GetMapping
+    @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
+    public ResponseEntity<List<CategoryJson>> getCategories() {
+        return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.ACCEPTED);
+    }
+
     @PostMapping("/add-category")
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
     public ResponseEntity<String> createCategory(@Valid @RequestBody CategoryJson category) {

@@ -15,5 +15,9 @@ import javax.validation.constraints.NotNull;
 public class CategoryJson {
 
     @NotNull
-    private String categoryName;
+    private String id;
+    @NotNull
+    private String name;
+    @NotNull
+    private String img;
 }

@@ -6,7 +6,7 @@ services:
       POSTGRES_HOST: "db"
       POSTGRES_DB: webshop3d
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: docker3d
+      POSTGRES_PASSWORD: password
     volumes:
       - ./pg-data:/var/lib/postgresql/data
     expose:
@@ -19,22 +19,22 @@ services:
     image: webshop3dapp
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: docker3d
+      POSTGRES_PASSWORD: password
     expose:
-      - 8080
+      - 5000
     ports:
-      - "8080:8080"
+      - "5000:5000"
     depends_on:
       - "db"
-    command: ["./opt/wait-for-postgres.sh", "db", "--spring.profiles.active=prd"]
+    command: ["./opt/wait-for-postgres.sh", "db", "--spring.profiles.active=docker"]
 
-  frontend:
-    build: ./client
-    image: fr_webshop3dapp
-    volumes:
-      - ./client/src:/usr/src/app/src
-      - ./client/public:/usr/src/app/public
-    ports:
-      - "3000:3000"
-    links:
-      - backend
+#  frontend:
+#    build: ./client
+#    image: fr_webshop3dapp
+#    volumes:
+#      - ./client/src:/usr/src/app/src
+#      - ./client/public:/usr/src/app/public
+#    ports:
+#      - "3000:3000"
+#    links:
+#      - backend

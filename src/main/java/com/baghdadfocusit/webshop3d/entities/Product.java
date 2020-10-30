@@ -34,7 +34,8 @@ public class Product extends BaseModel {
     private int quantity;
     private boolean sale;
     private String description;
-
+    private boolean recommended;
+    
     @JoinColumn(name = "category_id", insertable = false, updatable = false)
     @ManyToOne(targetEntity = Category.class, fetch = FetchType.EAGER)
     private Category category;

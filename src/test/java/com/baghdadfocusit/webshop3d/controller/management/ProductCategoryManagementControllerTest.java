@@ -37,7 +37,7 @@ public class ProductCategoryManagementControllerTest {
 
     @BeforeEach
     void setUp() {
-        categoryJson = new CategoryJson("Laptop");
+        categoryJson = new CategoryJson("uuid", "hello", "Laptop");
     }
 
     @Test

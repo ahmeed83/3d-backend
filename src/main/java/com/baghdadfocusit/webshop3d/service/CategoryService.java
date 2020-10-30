@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -41,8 +42,17 @@ public class CategoryService {
      *
      * @return categories
      */
-    public List<Category> getAllCategories() {
-        return (List<Category>) categoryRepository.findAll();
+    public List<CategoryJson> getAllCategories() {
+        var categories = (List<Category>) categoryRepository.findAll();
+        List<CategoryJson> categoryJsonList = new ArrayList<>();
+        for (Category catVo : categories) {
+            CategoryJson cat = new CategoryJson();
+            cat.setName(catVo.getName());
+            cat.setId(catVo.getId().toString());
+            cat.setImg(catVo.getImg());
+            categoryJsonList.add(cat);
+        }
+        return categoryJsonList;
     }
 
     /**
@@ -75,12 +85,12 @@ public class CategoryService {
      * @return category name created
      */
     public String creatCategoryAndGetCategoryName(final CategoryJson categoryJson) {
-        categoryRepository.findCategoryByNameIgnoreCase(categoryJson.getCategoryName()).
+        categoryRepository.findCategoryByNameIgnoreCase(categoryJson.getName()).
                 ifPresent(s -> {
                     throw new CategoryAlreadyExistsException();
                 });
         final Category category = Category.builder()
-                .name(categoryJson.getCategoryName())
+                .name(categoryJson.getName())
                 .createdAt(LocalDate.now())
                 .build();
         final var savedCategory = categoryRepository.save(category);

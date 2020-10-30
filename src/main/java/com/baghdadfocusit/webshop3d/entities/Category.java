@@ -17,6 +17,9 @@ import javax.validation.constraints.NotNull;
 public class Category extends BaseModel {
 
     @NotNull
-    @Column(name="name", unique=true)
+    @Column(name = "name", unique = true)
     private String name;
+
+    @Column(name = "picLocation")
+    private String img;
 }
