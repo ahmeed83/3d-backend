@@ -10,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -22,6 +23,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
+@Table(name = "APPLICATION_USER")
 public class ApplicationUser extends BaseModel {
 
     @NotBlank(message = "Username is required")
