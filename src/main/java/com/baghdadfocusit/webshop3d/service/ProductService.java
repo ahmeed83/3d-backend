@@ -2,6 +2,8 @@ package com.baghdadfocusit.webshop3d.service;
 
 import com.baghdadfocusit.webshop3d.configuration.aws.AmazonFileStore;
 import com.baghdadfocusit.webshop3d.entities.Product;
+import com.baghdadfocusit.webshop3d.model.CategoryJsonResponse;
+import com.baghdadfocusit.webshop3d.model.SubCategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonRequest;
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonResponse;
 import com.baghdadfocusit.webshop3d.model.product.ProductUpdatePriceRequest;
@@ -64,8 +66,12 @@ public class ProductService {
                                                                               product.getPicLocation(),
                                                                               product.getDescription(),
                                                                               product.getQuantity(),
-                                                                              product.getCategory(),
-                                                                              product.getSubCategory()))
+                                                                              CategoryJsonResponse.builder()
+                                                                                      .name(product.getCategory().getName())
+                                                                                      .build(),
+                                                                              SubCategoryJsonResponse.builder()
+                                                                                      .name(product.getCategory().getName())
+                                                                                      .build()))
                                       .collect(Collectors.toList()), productPage.getPageable(),
                               productPage.getTotalElements());
     }
@@ -84,9 +90,13 @@ public class ProductService {
                                                         product.getPrice(), product.isSale(),
                                                         product.getPicLocation(),
                                                         product.getDescription(),
-                                                        product.getQuantity(),
-                                                        product.getCategory(),
-                                                        product.getSubCategory()))
+                                                        product.getQuantity(), 
+                                                                 CategoryJsonResponse.builder()
+                                                                         .name(product.getCategory().getName())
+                                                                         .build(),
+                                                                 SubCategoryJsonResponse.builder()
+                                                                         .name(product.getCategory().getName())
+                                                                         .build()))
                 .collect(Collectors.toList()));
     }
 
@@ -97,8 +107,12 @@ public class ProductService {
                                                                  product.getPicLocation(),
                                                                  product.getDescription(),
                                                                  product.getQuantity(),
-                                                                 product.getCategory(),
-                                                                 product.getSubCategory()))
+                                                                 CategoryJsonResponse.builder()
+                                                                         .name(product.getCategory().getName())
+                                                                         .build(),
+                                                                 SubCategoryJsonResponse.builder()
+                                                                         .name(product.getCategory().getName())
+                                                                         .build()))
                                                 .collect(Collectors.toList());
     }
 

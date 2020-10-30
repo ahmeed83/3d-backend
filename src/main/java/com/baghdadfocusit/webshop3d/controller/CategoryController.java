@@ -1,7 +1,7 @@
 package com.baghdadfocusit.webshop3d.controller;
 
 import com.baghdadfocusit.webshop3d.model.CategoryJsonResponse;
-import com.baghdadfocusit.webshop3d.model.SubCategoryJson;
+import com.baghdadfocusit.webshop3d.model.SubCategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.service.CategoryService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ public class CategoryController {
     }
 
     @GetMapping("/sub-category/{categoryId}")
-    public ResponseEntity<List<SubCategoryJson>> getSubCategories(@PathVariable String categoryId) {
+    public ResponseEntity<List<SubCategoryJsonResponse>> getSubCategories(@PathVariable String categoryId) {
         return new ResponseEntity<>(categoryService.getAllSubCategories(categoryId), HttpStatus.ACCEPTED);
     }
     

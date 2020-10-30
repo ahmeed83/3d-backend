@@ -1,7 +1,7 @@
 package com.baghdadfocusit.webshop3d.controller.management;
 
 import com.baghdadfocusit.webshop3d.entities.Category;
-import com.baghdadfocusit.webshop3d.model.SubCategoryJson;
+import com.baghdadfocusit.webshop3d.model.SubCategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.repository.CategoryRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ public class ProductSubCategoryManagementControllerTest {
 
     public static final UUID CATEGORY_ID = UUID.randomUUID();
 
-    private SubCategoryJson subCategoryJson;
+    private SubCategoryJsonResponse subCategoryJson;
 
     private Category category;
 
@@ -53,7 +53,7 @@ public class ProductSubCategoryManagementControllerTest {
     @BeforeEach
     void setUp() {
         category = Category.builder().id(CATEGORY_ID).name("Laptop").createdAt(LocalDate.now()).build();
-        subCategoryJson = new SubCategoryJson(UUID.randomUUID(), "MacBook", String.valueOf(CATEGORY_ID));
+        subCategoryJson = new SubCategoryJsonResponse(UUID.randomUUID(), "MacBook", String.valueOf(CATEGORY_ID));
     }
 
     @Test

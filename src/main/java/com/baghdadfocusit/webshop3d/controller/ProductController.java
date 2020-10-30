@@ -26,12 +26,17 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("old")
-    public ResponseEntity<Page<ProductJsonResponse>> getAllProducts(@RequestParam Optional<String> name,
+    @GetMapping("all")
+    public ResponseEntity<List<ProductJsonResponse>> getAllProducts(@RequestParam Optional<String> name,
                                                                     @RequestParam Optional<String> categoryName,
                                                                     @RequestParam Optional<Integer> page,
                                                                     @RequestParam Optional<String> sortBy) {
-        return ResponseEntity.ok(productService.getFilterProducts(name, categoryName, page, sortBy));
+        var products = productService.getFilterProducts(name, categoryName, page, sortBy);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Content-Range", String.valueOf(products.getTotalElements()));
+        return ResponseEntity.ok()
+                .headers(responseHeaders)
+                .body(products.getContent());
     }
 
     @GetMapping

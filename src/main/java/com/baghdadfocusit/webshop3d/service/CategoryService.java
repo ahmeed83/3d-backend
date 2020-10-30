@@ -6,7 +6,7 @@ import com.baghdadfocusit.webshop3d.exception.category.CategoryAlreadyExistsExce
 import com.baghdadfocusit.webshop3d.exception.category.CategoryNotFoundException;
 import com.baghdadfocusit.webshop3d.exception.category.SubCategoryAlreadyExistsException;
 import com.baghdadfocusit.webshop3d.model.CategoryJsonResponse;
-import com.baghdadfocusit.webshop3d.model.SubCategoryJson;
+import com.baghdadfocusit.webshop3d.model.SubCategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.repository.CategoryRepository;
 import com.baghdadfocusit.webshop3d.repository.SubCategoryRepository;
 import org.slf4j.Logger;
@@ -56,20 +56,20 @@ public class CategoryService {
      * @param categoryId categoryId
      * @return sub categories
      */
-    public List<SubCategoryJson> getAllSubCategories(final String categoryId) {
+    public List<SubCategoryJsonResponse> getAllSubCategories(final String categoryId) {
         final List<SubCategory> subCategoriesByCategoryIdList;
         try {
             subCategoriesByCategoryIdList = subCategoryRepository.findSubCategoriesByCategoryId(
                     UUID.fromString(categoryId));
             if (subCategoriesByCategoryIdList.isEmpty()) {
-                return List.of(new SubCategoryJson(UUID.randomUUID(), "No sub categories found", "categoryId"));
+                return List.of(new SubCategoryJsonResponse(UUID.randomUUID(), "No sub categories found", "categoryId"));
             }
             return subCategoriesByCategoryIdList.stream()
-                    .map(subCategory -> new SubCategoryJson(subCategory.getId(), subCategory.getName(),
-                                                            String.valueOf(subCategory.getCategoryId())))
+                    .map(subCategory -> new SubCategoryJsonResponse(subCategory.getId(), subCategory.getName(),
+                                                                    String.valueOf(subCategory.getCategoryId())))
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            return List.of(new SubCategoryJson(UUID.randomUUID(), "No Category selected", "categoryId"));
+            return List.of(new SubCategoryJsonResponse(UUID.randomUUID(), "No Category selected", "categoryId"));
         }
     }
 
@@ -99,8 +99,8 @@ public class CategoryService {
      * @param subCategoryJson subCategoryJson
      * @return sub category name
      */
-    public String creatSubCategoryAndGetSubCategoryName(final SubCategoryJson subCategoryJson) {
-        subCategoryRepository.findSubCategoryByNameIgnoreCase(subCategoryJson.getSubCategoryName()).
+    public String creatSubCategoryAndGetSubCategoryName(final SubCategoryJsonResponse subCategoryJson) {
+        subCategoryRepository.findSubCategoryByNameIgnoreCase(subCategoryJson.getName()).
                 ifPresent(s -> {
                     throw new SubCategoryAlreadyExistsException();
                 });
@@ -109,7 +109,7 @@ public class CategoryService {
         final SubCategory subCategory = SubCategory.builder()
                 .categoryId(category.getId())
                 .category(category)
-                .name(subCategoryJson.getSubCategoryName())
+                .name(subCategoryJson.getName())
                 .createdAt(LocalDate.now())
                 .build();
         final var savedSubCategory = subCategoryRepository.save(subCategory);
