@@ -5,7 +5,7 @@ import com.baghdadfocusit.webshop3d.entities.SubCategory;
 import com.baghdadfocusit.webshop3d.exception.category.CategoryAlreadyExistsException;
 import com.baghdadfocusit.webshop3d.exception.category.CategoryNotFoundException;
 import com.baghdadfocusit.webshop3d.exception.category.SubCategoryAlreadyExistsException;
-import com.baghdadfocusit.webshop3d.model.CategoryJson;
+import com.baghdadfocusit.webshop3d.model.CategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.model.SubCategoryJson;
 import com.baghdadfocusit.webshop3d.repository.CategoryRepository;
 import com.baghdadfocusit.webshop3d.repository.SubCategoryRepository;
@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -42,17 +41,13 @@ public class CategoryService {
      *
      * @return categories
      */
-    public List<CategoryJson> getAllCategories() {
-        var categories = (List<Category>) categoryRepository.findAll();
-        List<CategoryJson> categoryJsonList = new ArrayList<>();
-        for (Category catVo : categories) {
-            CategoryJson cat = new CategoryJson();
-            cat.setName(catVo.getName());
-            cat.setId(catVo.getId().toString());
-            cat.setImg(catVo.getImg());
-            categoryJsonList.add(cat);
-        }
-        return categoryJsonList;
+    public List<CategoryJsonResponse> getAllCategories() {
+        List<Category> categories = (List<Category>) categoryRepository.findAll();
+        return categories.stream()
+                .map(category -> new CategoryJsonResponse(category.getId().toString(),
+                                                          category.getName(),
+                                                          category.getImg()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -84,7 +79,7 @@ public class CategoryService {
      * @param categoryJson category json
      * @return category name created
      */
-    public String creatCategoryAndGetCategoryName(final CategoryJson categoryJson) {
+    public String creatCategoryAndGetCategoryName(final CategoryJsonResponse categoryJson) {
         categoryRepository.findCategoryByNameIgnoreCase(categoryJson.getName()).
                 ifPresent(s -> {
                     throw new CategoryAlreadyExistsException();

@@ -74,16 +74,32 @@ public class ProductService {
         productRepository.deleteById(UUID.fromString(productId));
     }
 
-    public Page<Product> getProductsByCategoryId(Optional<String> categoryId,
+    public Page<ProductJsonResponse> getProductsByCategoryId(Optional<String> categoryId,
                                                  Optional<Integer> page,
                                                  Optional<String> sortBy) {
-        return productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
+        return new PageImpl<>(productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
                                                            PageRequest.of(page.orElse(0), 5, Direction.ASC,
-                                                                          sortBy.orElse("name")));
+                                                                          sortBy.orElse("name")))
+                .stream().map(product -> new ProductJsonResponse(product.getId(), product.getName(),
+                                                        product.getPrice(), product.isSale(),
+                                                        product.getPicLocation(),
+                                                        product.getDescription(),
+                                                        product.getQuantity(),
+                                                        product.getCategory(),
+                                                        product.getSubCategory()))
+                .collect(Collectors.toList()));
     }
 
-    public List<Product> getRecommendedProducts() {
-        return productRepository.findProductsByRecommendedTrue();
+    public List<ProductJsonResponse> getRecommendedProducts() {
+        return productRepository.findProductsByRecommendedTrue()
+                .stream().map(product -> new ProductJsonResponse(product.getId(), product.getName(),
+                                                                 product.getPrice(), product.isSale(),
+                                                                 product.getPicLocation(),
+                                                                 product.getDescription(),
+                                                                 product.getQuantity(),
+                                                                 product.getCategory(),
+                                                                 product.getSubCategory()))
+                                                .collect(Collectors.toList());
     }
 
     public String createProductAndGetProductName(ProductJsonRequest productJson) {

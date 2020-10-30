@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryJson {
+public class CategoryJsonResponse {
 
     @NotNull
     private String id;

@@ -1,6 +1,6 @@
 package com.baghdadfocusit.webshop3d.controller.management;
 
-import com.baghdadfocusit.webshop3d.model.CategoryJson;
+import com.baghdadfocusit.webshop3d.model.CategoryJsonResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class ProductCategoryManagementControllerTest {
 
-    private CategoryJson categoryJson;
+    private CategoryJsonResponse categoryJson;
 
     private static final String MANAGEMENT_V_1_CATEGORY_PATH = "/management/v1/category";
 
@@ -37,7 +37,7 @@ public class ProductCategoryManagementControllerTest {
 
     @BeforeEach
     void setUp() {
-        categoryJson = new CategoryJson("uuid", "hello", "Laptop");
+        categoryJson = new CategoryJsonResponse("uuid", "hello", "Laptop");
     }
 
     @Test

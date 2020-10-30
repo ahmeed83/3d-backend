@@ -1,7 +1,6 @@
 package com.baghdadfocusit.webshop3d.controller.management;
 
-import com.baghdadfocusit.webshop3d.entities.Category;
-import com.baghdadfocusit.webshop3d.model.CategoryJson;
+import com.baghdadfocusit.webshop3d.model.CategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,13 +31,13 @@ public class ProductCategoryManagementController {
 
     @GetMapping
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
-    public ResponseEntity<List<CategoryJson>> getCategories() {
+    public ResponseEntity<List<CategoryJsonResponse>> getCategories() {
         return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/add-category")
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
-    public ResponseEntity<String> createCategory(@Valid @RequestBody CategoryJson category) {
+    public ResponseEntity<String> createCategory(@Valid @RequestBody CategoryJsonResponse category) {
         return new ResponseEntity<>(categoryService.creatCategoryAndGetCategoryName(category), HttpStatus.CREATED);
     }
 }

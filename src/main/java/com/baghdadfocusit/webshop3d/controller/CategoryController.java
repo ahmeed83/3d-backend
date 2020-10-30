@@ -1,6 +1,6 @@
 package com.baghdadfocusit.webshop3d.controller;
 
-import com.baghdadfocusit.webshop3d.model.CategoryJson;
+import com.baghdadfocusit.webshop3d.model.CategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.model.SubCategoryJson;
 import com.baghdadfocusit.webshop3d.service.CategoryService;
 import org.springframework.http.HttpHeaders;
@@ -32,7 +32,7 @@ public class CategoryController {
     }
     
     @GetMapping()
-    public ResponseEntity<List<CategoryJson>> getCategories() {
+    public ResponseEntity<List<CategoryJsonResponse>> getCategories() {
         var allCategories = categoryService.getAllCategories();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Range", String.valueOf(allCategories.size()));
