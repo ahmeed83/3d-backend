@@ -59,18 +59,16 @@ public class ProductService {
                                                               PageRequest.of(page.orElse(0), 25, Sort.unsorted()));
         }
 
-        return new PageImpl<>(productPage.getContent()
-                                      .stream()
-                                      .map(product -> new ProductJsonResponse(product.getId(), product.getName(),
+        return new PageImpl<>(productPage.getContent().stream().map(product -> new ProductJsonResponse(product.getId(), product.getName(),
                                                                               product.getPrice(), product.isSale(),
                                                                               product.getPicLocation(),
                                                                               product.getDescription(),
                                                                               product.getQuantity(),
                                                                               CategoryJsonResponse.builder()
-                                                                                      .name(product.getCategory().getName())
+                                                                                      .id(String.valueOf(product.getCategoryId()))
                                                                                       .build(),
                                                                               SubCategoryJsonResponse.builder()
-                                                                                      .name(product.getCategory().getName())
+                                                                                      .id(product.getSubCategoryId())
                                                                                       .build()))
                                       .collect(Collectors.toList()), productPage.getPageable(),
                               productPage.getTotalElements());
@@ -87,15 +85,15 @@ public class ProductService {
                                                            PageRequest.of(page.orElse(0), 5, Direction.ASC,
                                                                           sortBy.orElse("name")))
                 .stream().map(product -> new ProductJsonResponse(product.getId(), product.getName(),
-                                                        product.getPrice(), product.isSale(),
-                                                        product.getPicLocation(),
-                                                        product.getDescription(),
-                                                        product.getQuantity(), 
+                                                                product.getPrice(), product.isSale(),
+                                                                product.getPicLocation(),
+                                                                product.getDescription(),
+                                                                product.getQuantity(), 
                                                                  CategoryJsonResponse.builder()
-                                                                         .name(product.getCategory().getName())
+                                                                         .id(String.valueOf(product.getCategoryId()))
                                                                          .build(),
                                                                  SubCategoryJsonResponse.builder()
-                                                                         .name(product.getCategory().getName())
+                                                                         .id(product.getSubCategoryId())
                                                                          .build()))
                 .collect(Collectors.toList()));
     }
@@ -108,25 +106,24 @@ public class ProductService {
                                                                  product.getDescription(),
                                                                  product.getQuantity(),
                                                                  CategoryJsonResponse.builder()
-                                                                         .name(product.getCategory().getName())
+                                                                         .id(String.valueOf(product.getCategoryId()))
                                                                          .build(),
                                                                  SubCategoryJsonResponse.builder()
-                                                                         .name(product.getCategory().getName())
+                                                                         .id(product.getSubCategoryId())
                                                                          .build()))
                                                 .collect(Collectors.toList());
     }
 
     public String createProductAndGetProductName(ProductJsonRequest productJson) {
         final String imageLink = saveImageInAmazonAndGetLink(productJson.getProductImage());
-        final Product product = Product.builder()
-                .createdAt(LocalDate.now())
-                .name(productJson.getProductName())
-                .price(productJson.getProductPrice())
-                .picLocation(imageLink)
-                .sale(false)
-                .categoryId(UUID.fromString(productJson.getCategoryId()))
-                .subCategoryId(UUID.fromString(productJson.getSubCategoryId()))
-                .build();
+        final Product product = Product.builder().createdAt(LocalDate.now())
+                                                 .name(productJson.getProductName())
+                                                 .price(productJson.getProductPrice())
+                                                 .picLocation(imageLink)
+                                                 .sale(false)
+                                                 .categoryId(UUID.fromString(productJson.getCategoryId()))
+                                                 .subCategoryId(UUID.fromString(productJson.getSubCategoryId()))
+                                                 .build();
         final var savedProduct = productRepository.save(product);
         LOGGER.info("Product is saved with product Id: {}", savedProduct.getId());
         return String.valueOf(savedProduct.getName());
