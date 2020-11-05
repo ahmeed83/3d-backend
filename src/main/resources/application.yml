@@ -6,9 +6,27 @@ spring:
   profiles:
     active: dev
 
+  cache:
+    cache-names:
+      - rate-limit-buckets
+    caffeine:
+      spec: maximumSize=100000,expireAfterAccess=3600s
+
   application:
     name: 3D Webshop
   servlet:
     multipart:
       enabled: true
       max-file-size: 50MB
+
+bucket4j:
+  enabled: true
+  filters:
+    - cache-name: rate-limit-buckets
+      url: /api/resources/orders.*
+      http-response-body: "{ \"status\": 429, \"error\": \"Too Many Requests\"}"
+      rate-limits:
+        - bandwidths:
+            - capacity: 10
+              time: 30
+              unit: seconds
