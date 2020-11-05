@@ -7,6 +7,7 @@ import com.baghdadfocusit.webshop3d.model.order.OrderProductsResponse;
 import com.baghdadfocusit.webshop3d.model.order.OrderRequestJson;
 import com.baghdadfocusit.webshop3d.model.order.OrderResponseJson;
 import com.baghdadfocusit.webshop3d.model.order.OrderStatusResponse;
+import com.baghdadfocusit.webshop3d.model.order.OrderStatusUpdateRequest;
 import com.baghdadfocusit.webshop3d.repository.OrderRepository;
 import com.baghdadfocusit.webshop3d.repository.ProductRepository;
 import org.slf4j.Logger;
@@ -63,7 +64,7 @@ public class OrderService {
                                                                 orderItem.getProduct().getPrice(), orderItem.getCount(),
                                                                 orderItem.getAmount()))
                     .collect(Collectors.toList());
-            return new OrderResponseJson(order.getCreatedAt(), order.getCity(), order.getName(),
+            return new OrderResponseJson(order.getId(), order.getCreatedAt(), order.getCity(), order.getName(),
                                          order.getOrderTrackId(), order.getTotalAmount(), order.getOrderState(),
                                          order.getCompanyName(), order.getDistrict(), order.getDistrict2(),
                                          order.getMobileNumber(), order.getEmail(), order.getNotes(),
@@ -115,7 +116,7 @@ public class OrderService {
         }
 
         LOGGER.info("Order is successfully saved with category Id: {}", savedOrder.getId());
-        return new OrderResponseJson(order.getCreatedAt(), order.getCity(), order.getName(), order.getOrderTrackId(),
+        return new OrderResponseJson(order.getId(), order.getCreatedAt(), order.getCity(), order.getName(), order.getOrderTrackId(),
                                      order.getTotalAmount(), order.getOrderState(), order.getCompanyName(), order.getDistrict(),
                                      order.getDistrict2(), order.getMobileNumber(), order.getEmail(), order.getNotes(),
                                      order.getProducts().size(), order.getOrderItems()
@@ -129,7 +130,14 @@ public class OrderService {
 
     public OrderStatusResponse checkStatusOrder(final String orderTrackId) {
         Order order = orderRepository.findOrderByOrderTrackId(orderTrackId).orElseThrow(IllegalArgumentException::new);
-        return new OrderStatusResponse(order.getCreatedAt(), order.getUpdatedAt(), order.getName(),
-                                       order.getOrderTrackId(), order.getOrderState());
+        LOGGER.info("Order with {} ID is successfully found", orderTrackId);
+        return new OrderStatusResponse(order.getCreatedAt(), order.getName(), order.getOrderState());
+    }
+
+    public void updateOrderStatus(final OrderStatusUpdateRequest orderStatusUpdateRequest) {
+        Order order = orderRepository.findOrderById(UUID.fromString(orderStatusUpdateRequest.getId())).orElseThrow(IllegalArgumentException::new);
+        order.setOrderState(orderStatusUpdateRequest.getOrderState());
+        orderRepository.save(order);
+        LOGGER.info("Order with {} ID is updated", orderStatusUpdateRequest.getId());
     }
 }

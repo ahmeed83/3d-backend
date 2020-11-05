@@ -7,18 +7,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderStatusResponse {
-
+public class OrderStatusUpdateRequest {
+    
     @NotNull
-    private LocalDate createdAt;
-    @NotNull
-    private String name;
+    private String id;
     @NotNull
     private Order.OrderState orderState;
 }

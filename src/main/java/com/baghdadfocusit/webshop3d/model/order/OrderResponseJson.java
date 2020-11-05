@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,6 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderResponseJson {
 
+    @NotNull
+    private UUID id;    
     @NotNull
     private LocalDate localDate;
     @NotNull

@@ -18,4 +18,6 @@ public interface OrderRepository extends CrudRepository<Order, UUID> {
     Page<Order> getFilterOrders(@Param("orderName") String orderName, Pageable pageable);
 
     Optional<Order> findOrderByOrderTrackId(String trackId);
+    
+    Optional<Order> findOrderById(UUID orderId);
 }
