@@ -3,17 +3,15 @@ server:
     context-path: /api
 
 spring:
+  application:
+    name: 3D Webshop
   profiles:
-    active: dev
-
+    active: local
   cache:
     cache-names:
       - rate-limit-buckets
     caffeine:
       spec: maximumSize=100000,expireAfterAccess=3600s
-
-  application:
-    name: 3D Webshop
   servlet:
     multipart:
       enabled: true

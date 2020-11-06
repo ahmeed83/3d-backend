@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Profile;
  * Datasource class.
  */
 @Configuration
-@Profile("dev")
 public class Datasource {
 
     /**

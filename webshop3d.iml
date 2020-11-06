@@ -31,7 +31,7 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_14_PREVIEW">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_11">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
@@ -387,5 +387,15 @@
     <orderEntry type="library" name="Maven: joda-time:joda-time:2.10.5" level="project" />
     <orderEntry type="library" name="Maven: com.amazonaws:aws-java-sdk-models:1.11.743" level="project" />
     <orderEntry type="library" name="Maven: com.amazonaws:aws-java-sdk-swf-libraries:1.11.22" level="project" />
+    <orderEntry type="library" name="Maven: com.giffing.bucket4j.spring.boot.starter:bucket4j-spring-boot-starter:0.2.0" level="project" />
+    <orderEntry type="library" name="Maven: com.giffing.bucket4j.spring.boot.starter:bucket4j-spring-boot-starter-context:0.2.0" level="project" />
+    <orderEntry type="library" name="Maven: com.github.vladimir-bukhtoyarov:bucket4j-core:4.5.0" level="project" />
+    <orderEntry type="library" name="Maven: com.github.vladimir-bukhtoyarov:bucket4j-jcache:4.5.0" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-cache:2.2.4.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: javax.cache:cache-api:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: com.github.ben-manes.caffeine:caffeine:2.8.2" level="project" />
+    <orderEntry type="library" name="Maven: com.github.ben-manes.caffeine:jcache:2.8.2" level="project" />
+    <orderEntry type="library" name="Maven: com.typesafe:config:1.4.0" level="project" />
+    <orderEntry type="library" name="Maven: javax.inject:javax.inject:1" level="project" />
   </component>
 </module>

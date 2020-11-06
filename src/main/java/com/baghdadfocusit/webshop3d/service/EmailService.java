@@ -47,24 +47,26 @@ public class EmailService {
                 .append(": ")
                 .append(product.getPrice())
                 .append(" ] "));
-        String emailContent = """
-                <html>
-                    <body>
-                        <h3>طلبية البضاعة </h3>
-                        <p>Customer name: %s</p>
-                        <p>District: %s</p>
-                        <p>Additional District: %s</p>
-                        <p>Mobile Number:%s</p>
-                        <p>Email: %s</p>
-                        <p>Company Name: %s</p>
-                        <p>City: %s</p>
-                        <p>Products: %s</p>
-                        <p>Total price: %s</p>
-                    </body>
-                </html>
-                """.formatted(order.getName(), order.getDistrict(), order.getDistrict2(), order.getMobileNumber(),
-                              order.getEmail(), order.getCompanyName(), order.getCity(), productSB,
-                              order.getTotalAmount());
+        //TODO: fix this email thing
+        String emailContent = "";
+//        String emailContent = """
+//                <html>
+//                    <body>
+//                        <h3>طلبية البضاعة </h3>
+//                        <p>Customer name: %s</p>
+//                        <p>District: %s</p>
+//                        <p>Additional District: %s</p>
+//                        <p>Mobile Number:%s</p>
+//                        <p>Email: %s</p>
+//                        <p>Company Name: %s</p>
+//                        <p>City: %s</p>
+//                        <p>Products: %s</p>
+//                        <p>Total price: %s</p>
+//                    </body>
+//                </html>
+//                """.formatted(order.getName(), order.getDistrict(), order.getDistrict2(), order.getMobileNumber(),
+//                              order.getEmail(), order.getCompanyName(), order.getCity(), productSB,
+//                              order.getTotalAmount());
         helper.setText(emailContent, true);
         javaMailSender.send(msg);
     }
