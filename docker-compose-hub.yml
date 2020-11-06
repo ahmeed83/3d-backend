@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_HOST: "db"
+      POSTGRES_DB: webshop3d
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./pg-data:/var/lib/postgresql/data
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
+
+  backend:
+    image: ahmed83/webshop3dapp:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    expose:
+      - 5000
+    ports:
+      - "5000:5000"
+    depends_on:
+      - "db"
+    command: ["./opt/wait-for-postgres.sh", "db"]
