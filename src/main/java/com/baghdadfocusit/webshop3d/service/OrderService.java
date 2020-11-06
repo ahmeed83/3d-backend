@@ -27,8 +27,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-;
-
 @Service
 public class OrderService {
 
@@ -45,17 +43,14 @@ public class OrderService {
         this.emailService = emailService;
     }
 
-    public Page<OrderResponseJson> getFilterOrders(Optional<String> name,
-                                                   Optional<Integer> page,
+    public Page<OrderResponseJson> getFilterOrders(Optional<Integer> page,
                                                    Optional<String> sortBy) {
         Page<Order> orderPage;
         if (sortBy.isPresent()) {
-            orderPage = orderRepository.getFilterOrders(name.orElse("_"),
-                                                        PageRequest.of(page.orElse(0), 25, Sort.Direction.ASC,
+            orderPage = orderRepository.findAll(PageRequest.of(page.orElse(0), 25, Sort.Direction.ASC,
                                                                        sortBy.orElse("name")));
         } else {
-            orderPage = orderRepository.getFilterOrders(name.orElse("_"),
-                                                        PageRequest.of(page.orElse(0), 25, Sort.unsorted()));
+            orderPage = orderRepository.findAll(PageRequest.of(page.orElse(0), 25, Sort.unsorted()));
         }
         return new PageImpl<>(orderPage.getContent().stream().map(order -> {
             var orderProductsResponse = order.getOrderItems()

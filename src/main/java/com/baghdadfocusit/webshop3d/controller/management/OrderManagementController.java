@@ -30,14 +30,12 @@ public class OrderManagementController {
     public OrderManagementController(final OrderService orderService) {
         this.orderService = orderService;
     }
-
-
+    
     @GetMapping
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
-    public ResponseEntity<Page<OrderResponseJson>> getAllFilterOrders(@RequestParam Optional<String> name,
-                                                                      @RequestParam Optional<Integer> page,
+    public ResponseEntity<Page<OrderResponseJson>> getAllFilterOrders(@RequestParam Optional<Integer> page,
                                                                       @RequestParam Optional<String> sortBy) {
-        return ResponseEntity.ok(orderService.getFilterOrders(name, page, sortBy));
+        return ResponseEntity.ok(orderService.getFilterOrders(page, sortBy));
     }
 
     @PostMapping
