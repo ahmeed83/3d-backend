@@ -6,7 +6,7 @@ spring:
   application:
     name: 3D Webshop
   profiles:
-    active: local
+    active: dev
   cache:
     cache-names:
       - rate-limit-buckets

@@ -4,7 +4,7 @@ server:
 app:
   email: ahmed83@me.com
   datasource:
-    jdbc-url: jdbc:postgresql://db/webshop3d
+    jdbc-url: jdbc:postgresql://db:5432/webshop3d
     username: postgres
     password: password
     pool-size: 30
@@ -12,7 +12,7 @@ app:
 # AWS S3 configuration
 aws:
   access_key_id: 'AKIA25AXLWROZGJI3QHL'
-  secret_access_key: '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'
+  secret_access_key: 'CHZejVQM0/rm/2Ub11MxZhlgit rm -r --cached .e1Ik9YLx4+DdyfUWY'
   s3:
     bucket: '3d-products-images'
     region: 'me-south-1'
