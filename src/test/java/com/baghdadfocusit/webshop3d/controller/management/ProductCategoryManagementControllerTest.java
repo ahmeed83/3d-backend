@@ -1,6 +1,6 @@
 package com.baghdadfocusit.webshop3d.controller.management;
 
-import com.baghdadfocusit.webshop3d.model.CategoryJsonResponse;
+import com.baghdadfocusit.webshop3d.model.category.CategoryJsonResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

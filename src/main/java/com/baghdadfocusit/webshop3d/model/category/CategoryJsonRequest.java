@@ -1,5 +1,4 @@
-package com.baghdadfocusit.webshop3d.model;
-
+package com.baghdadfocusit.webshop3d.model.category;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -16,7 +15,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CategoryJsonResponse {
+public class CategoryJsonRequest {
 
     @NotNull
     private String id;
