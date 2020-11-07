@@ -66,9 +66,6 @@ public class ProductService {
                                                                               product.getQuantity(),
                                                                               CategoryJsonResponse.builder()
                                                                                       .id(String.valueOf(product.getCategoryId()))
-                                                                                      .build(),
-                                                                              SubCategoryJsonResponse.builder()
-                                                                                      .id(product.getSubCategoryId())
                                                                                       .build()))
                                       .collect(Collectors.toList()), productPage.getPageable(),
                               productPage.getTotalElements());
@@ -91,9 +88,6 @@ public class ProductService {
                                                                 product.getQuantity(), 
                                                                  CategoryJsonResponse.builder()
                                                                          .id(String.valueOf(product.getCategoryId()))
-                                                                         .build(),
-                                                                 SubCategoryJsonResponse.builder()
-                                                                         .id(product.getSubCategoryId())
                                                                          .build()))
                 .collect(Collectors.toList()));
     }
@@ -107,9 +101,6 @@ public class ProductService {
                                                                  product.getQuantity(),
                                                                  CategoryJsonResponse.builder()
                                                                          .id(String.valueOf(product.getCategoryId()))
-                                                                         .build(),
-                                                                 SubCategoryJsonResponse.builder()
-                                                                         .id(product.getSubCategoryId())
                                                                          .build()))
                                                 .collect(Collectors.toList());
     }
@@ -122,7 +113,6 @@ public class ProductService {
                                                  .picLocation(imageLink)
                                                  .sale(false)
                                                  .categoryId(UUID.fromString(productJson.getCategoryId()))
-                                                 .subCategoryId(UUID.fromString(productJson.getSubCategoryId()))
                                                  .build();
         final var savedProduct = productRepository.save(product);
         LOGGER.info("Product is saved with product Id: {}", savedProduct.getId());

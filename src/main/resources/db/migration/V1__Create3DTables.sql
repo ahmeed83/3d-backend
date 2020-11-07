@@ -23,35 +23,12 @@ CREATE TABLE IF NOT EXISTS CATEGORY
     pic_location VARCHAR(500)        NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS SUB_CATEGORY
-(
-    id          UUID PRIMARY KEY    NOT NULL,
-    created_at  DATE                NOT NULL,
-    updated_at  DATE,
-    category_id UUID                NOT NULL,
-    name        VARCHAR(100) UNIQUE NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES CATEGORY (id)
-);
-
-CREATE TABLE IF NOT EXISTS CUSTOMER
-(
-    id              UUID PRIMARY KEY NOT NULL,
-    created_at      DATE             NOT NULL,
-    updated_at      DATE,
-    name            VARCHAR(100)     NOT NULL,
-    email           VARCHAR(100)     NOT NULL,
-    phone           VARCHAR(100)     NOT NULL,
-    address         VARCHAR(100)     NOT NULL,
-    customer_number BIGINT           NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS PRODUCT
 (
     id              UUID PRIMARY KEY NOT NULL,
     created_at      DATE             NOT NULL,
     updated_at      DATE,
     category_id     UUID             NOT NULL,
-    sub_category_id UUID             NOT NULL,
     name            VARCHAR(100)     NOT NULL,
     quantity        INT              NOT NULL,
     pic_location    VARCHAR(500)     NOT NULL,
@@ -59,8 +36,7 @@ CREATE TABLE IF NOT EXISTS PRODUCT
     description     VARCHAR(500),
     sale            BOOLEAN,
     recommended     BOOLEAN,
-    FOREIGN KEY (category_id) REFERENCES CATEGORY (id),
-    FOREIGN KEY (sub_category_id) REFERENCES SUB_CATEGORY (id)
+    FOREIGN KEY (category_id) REFERENCES CATEGORY (id)
 );
 
 CREATE TYPE order_state AS ENUM ('RECEIVED', 'IN_PROGRESS', 'SHIPPED', 'DELIVERED' , 'COMPLETED');

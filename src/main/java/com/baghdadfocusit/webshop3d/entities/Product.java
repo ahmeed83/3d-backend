@@ -40,17 +40,9 @@ public class Product extends BaseModel {
     @ManyToOne(targetEntity = Category.class, fetch = FetchType.EAGER)
     private Category category;
 
-    @JoinColumn(name = "sub_category_id", insertable = false, updatable = false)
-    @ManyToOne(targetEntity = SubCategory.class, fetch = FetchType.EAGER)
-    private SubCategory subCategory;
-
     @NotNull
     @Column(name = "category_id")
     private UUID categoryId;
-
-    @NotNull
-    @Column(name = "sub_category_id")
-    private UUID subCategoryId;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderItem> orders = new HashSet<>();

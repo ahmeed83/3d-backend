@@ -32,6 +32,4 @@ public class ProductJsonResponse {
     private int quantity;
     @NotNull
     private CategoryJsonResponse category;
-    @NotNull
-    private SubCategoryJsonResponse subCategory;
 }
