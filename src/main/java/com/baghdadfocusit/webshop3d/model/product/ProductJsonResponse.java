@@ -1,8 +1,7 @@
 package com.baghdadfocusit.webshop3d.model.product;
 
 
-import com.baghdadfocusit.webshop3d.model.CategoryJsonResponse;
-import com.baghdadfocusit.webshop3d.model.SubCategoryJsonResponse;
+import com.baghdadfocusit.webshop3d.model.category.CategoryJsonResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +31,4 @@ public class ProductJsonResponse {
     private int quantity;
     @NotNull
     private CategoryJsonResponse category;
-    @NotNull
-    private SubCategoryJsonResponse subCategory;
 }

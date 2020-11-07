@@ -2,8 +2,7 @@ package com.baghdadfocusit.webshop3d.service;
 
 import com.baghdadfocusit.webshop3d.configuration.aws.AmazonFileStore;
 import com.baghdadfocusit.webshop3d.entities.Product;
-import com.baghdadfocusit.webshop3d.model.CategoryJsonResponse;
-import com.baghdadfocusit.webshop3d.model.SubCategoryJsonResponse;
+import com.baghdadfocusit.webshop3d.model.category.CategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonRequest;
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonResponse;
 import com.baghdadfocusit.webshop3d.model.product.ProductUpdatePriceRequest;
@@ -66,9 +65,6 @@ public class ProductService {
                                                                               product.getQuantity(),
                                                                               CategoryJsonResponse.builder()
                                                                                       .id(String.valueOf(product.getCategoryId()))
-                                                                                      .build(),
-                                                                              SubCategoryJsonResponse.builder()
-                                                                                      .id(product.getSubCategoryId())
                                                                                       .build()))
                                       .collect(Collectors.toList()), productPage.getPageable(),
                               productPage.getTotalElements());
@@ -91,9 +87,6 @@ public class ProductService {
                                                                 product.getQuantity(), 
                                                                  CategoryJsonResponse.builder()
                                                                          .id(String.valueOf(product.getCategoryId()))
-                                                                         .build(),
-                                                                 SubCategoryJsonResponse.builder()
-                                                                         .id(product.getSubCategoryId())
                                                                          .build()))
                 .collect(Collectors.toList()));
     }
@@ -107,9 +100,6 @@ public class ProductService {
                                                                  product.getQuantity(),
                                                                  CategoryJsonResponse.builder()
                                                                          .id(String.valueOf(product.getCategoryId()))
-                                                                         .build(),
-                                                                 SubCategoryJsonResponse.builder()
-                                                                         .id(product.getSubCategoryId())
                                                                          .build()))
                                                 .collect(Collectors.toList());
     }
@@ -122,7 +112,6 @@ public class ProductService {
                                                  .picLocation(imageLink)
                                                  .sale(false)
                                                  .categoryId(UUID.fromString(productJson.getCategoryId()))
-                                                 .subCategoryId(UUID.fromString(productJson.getSubCategoryId()))
                                                  .build();
         final var savedProduct = productRepository.save(product);
         LOGGER.info("Product is saved with product Id: {}", savedProduct.getId());
