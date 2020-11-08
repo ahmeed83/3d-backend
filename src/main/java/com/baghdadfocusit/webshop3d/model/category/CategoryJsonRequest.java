@@ -17,7 +17,6 @@ import javax.validation.constraints.NotNull;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CategoryJsonRequest {
 
-    @NotNull
     private String id;
     @NotNull
     private String name;

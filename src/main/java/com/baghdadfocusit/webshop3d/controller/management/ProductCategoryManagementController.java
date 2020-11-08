@@ -31,7 +31,8 @@ public class ProductCategoryManagementController {
     @PostMapping("/add-category")
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
     public ResponseEntity<String> createCategory(@Valid @RequestBody CategoryJsonRequest category) {
-        return ResponseEntity.accepted().body(categoryService.creatCategoryAndGetCategoryName(category));
+        return ResponseEntity.accepted()
+                .body(categoryService.creatCategoryAndGetCategoryName(category));
     }
 
     @PostMapping("/update-category")
