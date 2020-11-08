@@ -7,10 +7,15 @@ import com.baghdadfocusit.webshop3d.model.category.CategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.repository.CategoryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -41,6 +46,28 @@ public class CategoryService {
                                                           category.getName(),
                                                           category.getImg()))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Get Filtered categories.
+     *
+     * @return categories
+     */
+    public Page<CategoryJsonResponse> getFilterCategories(Optional<Integer> page, Optional<String> sortBy) {
+        Page<Category> categoriesPage;
+        if (sortBy.isPresent()) {
+            categoriesPage = categoryRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC,
+                                                                       sortBy.orElse("name")));
+        } else {
+            categoriesPage = categoryRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
+        }
+        return new PageImpl<>(categoriesPage.getContent()
+                                      .stream()
+                                      .map(category -> new CategoryJsonResponse(category.getId().toString(),
+                                                                                category.getName(),
+                                                                                category.getImg())).collect(Collectors.toList()),
+                              categoriesPage.getPageable(),
+                              categoriesPage.getTotalElements());
     }
 
     /**
