@@ -96,6 +96,10 @@ public class CategoryService {
     }
 
     public void updateCategoryAndGetCategoryName(final CategoryJsonRequest categoryJson) {
+        categoryRepository.findCategoryByNameIgnoreCase(categoryJson.getName()).
+                ifPresent(s -> {
+                    throw new CategoryAlreadyExistsException();
+                });
         Category category = categoryRepository.findById(UUID.fromString(categoryJson.getId()))
                                                                 .orElseThrow(IllegalArgumentException::new);
         category.setName(categoryJson.getName());

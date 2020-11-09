@@ -6,6 +6,6 @@ import org.springframework.http.HttpStatus;
 public class CategoryAlreadyExistsException extends ApplicationException {
 
     public CategoryAlreadyExistsException() {
-        super("Category already exists!", HttpStatus.CONFLICT);
+        super("Category name already exists!", HttpStatus.CONFLICT);
     }
 }
