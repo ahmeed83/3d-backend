@@ -25,16 +25,6 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("all")
-    public ResponseEntity<List<ProductJsonResponse>> getAllProducts(@RequestParam Optional<String> name,
-                                                                    @RequestParam Optional<String> categoryName,
-                                                                    @RequestParam Optional<Integer> page,
-                                                                    @RequestParam Optional<String> sortBy) {
-        var products = productService.getFilterProducts(name, categoryName, page, sortBy);
-        return ResponseEntity.ok()
-                .body(products.getContent());
-    }
-
     @GetMapping
     public ResponseEntity<Page<ProductJsonResponse>> getProductsByCategory(@RequestParam Optional<String> categoryId,
                                                                @RequestParam Optional<Integer> page,

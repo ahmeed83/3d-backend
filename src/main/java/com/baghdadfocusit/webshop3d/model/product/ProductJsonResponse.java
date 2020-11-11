@@ -23,6 +23,7 @@ public class ProductJsonResponse {
     @NotNull
     private double price;
     private boolean sale;
+    private boolean recommended;
     @NotNull
     private String picLocation;
     @NotNull

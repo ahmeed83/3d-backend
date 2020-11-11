@@ -57,14 +57,14 @@ public class ProductControllerTest {
   @Autowired
   private MockMvc mockMvc;
 
-  @BeforeEach
-  void setUp() {
-    product = Product.builder().createdAt(LocalDate.now()).name("iPhone").price(200).picLocation("location").build();
-    when(productService.getFilterProducts(Optional.empty(),
-                                          Optional.empty(),
-                                          Optional.empty(),
-                                          Optional.empty())).thenReturn((Page) Arrays.asList(product));
-  }
+//  @BeforeEach
+//  void setUp() {
+//    product = Product.builder().createdAt(LocalDate.now()).name("iPhone").price(200).picLocation("location").build();
+//    when(productService.getFilterProductsByCategoryId(Optional.empty(),
+//                                                      Optional.empty(),
+//                                                      Optional.empty(),
+//                                                      Optional.empty())).thenReturn((Page) Arrays.asList(product));
+//  }
 
   @Test
   @DisplayName("0- Test GET anyone can get the list of the products")

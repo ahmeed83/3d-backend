@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS ORDER3D
     district       VARCHAR(100)     NOT NULL,
     district2      VARCHAR(100),
     mobile_number  VARCHAR(20)      NOT NULL,
-    email          VARCHAR(20),
+    email          VARCHAR(200),
     notes          VARCHAR(500)
 );
 

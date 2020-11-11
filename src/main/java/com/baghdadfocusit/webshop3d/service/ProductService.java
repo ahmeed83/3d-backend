@@ -43,67 +43,88 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final AmazonFileStore amazonFileStore;
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
-
-    public Page<ProductJsonResponse> getFilterProducts(Optional<String> name,
-                                                       Optional<String> categoryName,
-                                                       Optional<Integer> page,
-                                                       Optional<String> sortBy) {
+    
+    /**
+     * Get All Filtered products.
+     *
+     * @return products
+     */
+    public Page<ProductJsonResponse> getAllFilteredProducts(Optional<Integer> page, Optional<String> sortBy) {
         Page<Product> productPage;
         if (sortBy.isPresent()) {
-            productPage = productRepository.getFilterProducts(name.orElse("_"), categoryName.orElse("_"),
-                                                              PageRequest.of(page.orElse(0), 25, Direction.ASC,
-                                                                             sortBy.orElse("name")));
+            productPage = productRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC,
+                                                                   sortBy.orElse("name")));
         } else {
-            productPage = productRepository.getFilterProducts(name.orElse("_"), categoryName.orElse("_"),
-                                                              PageRequest.of(page.orElse(0), 25, Sort.unsorted()));
+            productPage = productRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
         }
-
-        return new PageImpl<>(productPage.getContent().stream().map(product -> new ProductJsonResponse(product.getId(), product.getName(),
+        return new PageImpl<>(productPage.getContent()
+                                      .stream()
+                                      .map(product -> new ProductJsonResponse(product.getId(), product.getName(), 
                                                                               product.getPrice(), product.isSale(),
-                                                                              product.getPicLocation(),
-                                                                              product.getDescription(),
-                                                                              product.getQuantity(),
+                                                                              product.isRecommended(), product.getPicLocation(), 
+                                                                              product.getDescription(), product.getQuantity(),
                                                                               CategoryJsonResponse.builder()
                                                                                       .id(String.valueOf(product.getCategoryId()))
-                                                                                      .build()))
-                                      .collect(Collectors.toList()), productPage.getPageable(),
+                                                                                      .name(product.getCategory().getName())
+                                                                                      .build())).collect(Collectors.toList()),
+                              productPage.getPageable(),
                               productPage.getTotalElements());
     }
 
+    /**
+     * Delete one product
+     * @param productId productId
+     */
     public void deleteProduct(String productId) {
         productRepository.deleteById(UUID.fromString(productId));
     }
 
+    /**
+     * Get Product by cateogry ID
+     * @param categoryId categoryId
+     * @param page page
+     * @param sortBy sortBy
+     * @return Page<ProductJsonResponse>
+     */
     public Page<ProductJsonResponse> getProductsByCategoryId(Optional<String> categoryId,
-                                                 Optional<Integer> page,
-                                                 Optional<String> sortBy) {
+                                                             Optional<Integer> page,
+                                                             Optional<String> sortBy) {
         return new PageImpl<>(productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
                                                            PageRequest.of(page.orElse(0), 5, Direction.ASC,
                                                                           sortBy.orElse("name")))
                 .stream().map(product -> new ProductJsonResponse(product.getId(), product.getName(),
                                                                 product.getPrice(), product.isSale(),
-                                                                product.getPicLocation(),
-                                                                product.getDescription(),
-                                                                product.getQuantity(), 
+                                                                product.isRecommended(), product.getPicLocation(),
+                                                                product.getDescription(), product.getQuantity(), 
                                                                  CategoryJsonResponse.builder()
                                                                          .id(String.valueOf(product.getCategoryId()))
                                                                          .build()))
                 .collect(Collectors.toList()));
     }
 
+    /**
+     * Get Only Recommended products.
+     *
+     * @return list of recommended products
+     */
     public List<ProductJsonResponse> getRecommendedProducts() {
         return productRepository.findProductsByRecommendedTrue()
                 .stream().map(product -> new ProductJsonResponse(product.getId(), product.getName(),
                                                                  product.getPrice(), product.isSale(),
-                                                                 product.getPicLocation(),
-                                                                 product.getDescription(),
-                                                                 product.getQuantity(),
+                                                                 product.isRecommended(), product.getPicLocation(),
+                                                                 product.getDescription(), product.getQuantity(),
                                                                  CategoryJsonResponse.builder()
                                                                          .id(String.valueOf(product.getCategoryId()))
                                                                          .build()))
                                                 .collect(Collectors.toList());
     }
 
+    /**
+     * Create one products
+     *
+     * @param productJson productJson
+     * @return product name
+     */
     public String createProductAndGetProductName(ProductJsonRequest productJson) {
         final String imageLink = saveImageInAmazonAndGetLink(productJson.getProductImage());
         final Product product = Product.builder().createdAt(LocalDate.now())
@@ -118,6 +139,28 @@ public class ProductService {
         return String.valueOf(savedProduct.getName());
     }
 
+
+    /**
+     * Update product price.
+     *
+     * @param productId productId
+     * @param updatePriceRequest updatePriceRequest
+     */
+    public void updateProductPrice(final String productId, final ProductUpdatePriceRequest updatePriceRequest) {
+        Product product = productRepository.findById(UUID.fromString(productId))
+                .orElseThrow(() -> new IllegalArgumentException("No Product found!"));
+        product.setPrice(updatePriceRequest.getProductPrice());
+        product.setUpdatedAt(LocalDate.now());
+        productRepository.save(product);
+        LOGGER.info("Price is updated for product with product id {} ", product.getId());
+    }
+
+    /**
+     * Save product image
+     *
+     * @param productImage productImage
+     * @return link of the image
+     */
     private String saveImageInAmazonAndGetLink(final MultipartFile productImage) {
         isImage(productImage);
         final Map<String, String> metadata = getMetaData(productImage);
@@ -144,14 +187,5 @@ public class ProductService {
                 .contains(productImage.getContentType())) {
             throw new IllegalStateException("File must be an Image [" + productImage.getContentType() + "]");
         }
-    }
-
-    public void updateProductPrice(final String productId, final ProductUpdatePriceRequest updatePriceRequest) {
-        Product product = productRepository.findById(UUID.fromString(productId))
-                .orElseThrow(() -> new IllegalArgumentException("No Product found!"));
-        product.setPrice(updatePriceRequest.getProductPrice());
-        product.setUpdatedAt(LocalDate.now());
-        productRepository.save(product);
-        LOGGER.info("Price is updated for product with product id {} ", product.getId());
     }
 }
