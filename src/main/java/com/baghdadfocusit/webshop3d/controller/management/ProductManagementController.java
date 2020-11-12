@@ -42,13 +42,21 @@ public class ProductManagementController {
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
     public ResponseEntity<Page<ProductJsonResponse>> getAllFilteredProducts(@RequestParam Optional<Integer> page,
                                                                             @RequestParam Optional<String> sortBy) {
-        return ResponseEntity.ok().body(productService.getAllFilteredProducts(page, sortBy));
+        return new ResponseEntity<>(productService.getAllFilteredProducts(page, sortBy), HttpStatus.OK);
+    }
+
+    @GetMapping("make-recommended/{productId}")
+    @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
+    public ResponseEntity<Page<ProductJsonResponse>> makeProductRecommended(@PathVariable String productId) {
+        productService.makeRecommended(productId);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
     public ResponseEntity<String> createProduct(@ModelAttribute @Valid ProductJsonRequest product) {
-        return new ResponseEntity<>(productService.createProductAndGetProductName(product), HttpStatus.CREATED);
+        return new ResponseEntity<>(productService.createProductAndGetProductName(product),
+                                    HttpStatus.CREATED);
     }
 
     @DeleteMapping("{productId}")

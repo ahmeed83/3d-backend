@@ -156,6 +156,20 @@ public class ProductService {
     }
 
     /**
+     * Make one product recommended. If it was already recommended, make it not recommended.
+     *
+     * @param productId productId
+     */
+    public void makeRecommended(final String productId) {
+        Product product = productRepository.findById(UUID.fromString(productId))
+                .orElseThrow(() -> new IllegalArgumentException("No Product found!"));
+        product.setRecommended(!product.isRecommended());
+        product.setUpdatedAt(LocalDate.now());
+        productRepository.save(product);
+        LOGGER.info("Recommended statue is updated for product with product id {} ", product.getId());
+    }
+
+    /**
      * Save product image
      *
      * @param productImage productImage
