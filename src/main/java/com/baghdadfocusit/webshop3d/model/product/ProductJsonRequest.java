@@ -22,5 +22,11 @@ public class ProductJsonRequest {
     @NotNull
     private String categoryId;
     @NotNull
+    private String quantity;
+    @NotNull
+    private boolean recommended;
+    @NotNull
+    private boolean sale;
+    @NotNull
     private MultipartFile productImage;
 }
