@@ -15,6 +15,10 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class ProductJsonRequest {
 
+    private String id;
+    private String description;
+    private boolean recommended;
+    private boolean sale;
     @NotNull
     private String productName;
     @NotNull
@@ -22,11 +26,7 @@ public class ProductJsonRequest {
     @NotNull
     private String categoryId;
     @NotNull
-    private String quantity;
-    @NotNull
-    private boolean recommended;
-    @NotNull
-    private boolean sale;
+    private int quantity;
     @NotNull
     private MultipartFile productImage;
 }

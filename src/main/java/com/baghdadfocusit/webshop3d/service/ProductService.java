@@ -122,21 +122,48 @@ public class ProductService {
     /**
      * Create one products
      *
-     * @param productJson productJson
-     * @return product name
+     * @param productRequest productRequest
      */
-    public String createProductAndGetProductName(ProductJsonRequest productJson) {
-        final String imageLink = saveImageInAmazonAndGetLink(productJson.getProductImage());
+    public void createProduct(ProductJsonRequest productRequest) {
+        //TODO: final String imageLink = saveImageInAmazonAndGetLink(productRequest.getProductImage());
+        final String imageLink = "hello";
         final Product product = Product.builder().createdAt(LocalDate.now())
-                                                 .name(productJson.getProductName())
-                                                 .price(productJson.getProductPrice())
+                                                 .name(productRequest.getProductName())
+                                                 .price(productRequest.getProductPrice())
                                                  .picLocation(imageLink)
+                                                 .quantity(productRequest.getQuantity())
                                                  .sale(false)
-                                                 .categoryId(UUID.fromString(productJson.getCategoryId()))
+                                                 .recommended(productRequest.isRecommended())
+                                                 .description(productRequest.getDescription())
+                                                 .categoryId(UUID.fromString(productRequest.getCategoryId()))
                                                  .build();
         final var savedProduct = productRepository.save(product);
         LOGGER.info("Product is saved with product Id: {}", savedProduct.getId());
-        return String.valueOf(savedProduct.getName());
+    }
+
+    /**
+     * Edit one products
+     *
+     * @param productRequest productRequest
+     */
+    public void editProduct(final ProductJsonRequest productRequest) {
+        Product product = productRepository.findById(UUID.fromString(productRequest.getId()))
+                .orElseThrow(() -> new IllegalArgumentException("No Product found!"));
+
+        //TODO: final String imageLink = saveImageInAmazonAndGetLink(productRequest.getProductImage());
+        final String imageLink = "hello";
+        product.setName(productRequest.getProductName());
+        product.setRecommended(productRequest.isRecommended());
+        product.setCategoryId(UUID.fromString(productRequest.getCategoryId()));
+        product.setPrice(productRequest.getProductPrice());
+        product.setSale(productRequest.isSale());
+        product.setDescription(productRequest.getDescription());
+        product.setQuantity(productRequest.getQuantity());
+        product.setPicLocation(imageLink);
+        product.setUpdatedAt(LocalDate.now());
+
+        productRepository.save(product);
+        LOGGER.info("Price is updated for product with product id {} ", product.getId());
     }
 
 

@@ -1,7 +1,6 @@
 package com.baghdadfocusit.webshop3d.service;
 
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonRequest;
-import com.baghdadfocusit.webshop3d.model.product.ProductJsonResponse;
 import com.baghdadfocusit.webshop3d.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,12 +9,8 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -58,7 +53,7 @@ class ProductServiceTest {
 
     @Test
     void createNewProduct() {
-        final var newProduct = productService.createProductAndGetProductName(productJson);
+//        final var newProduct = productService.createProduct(productJson);
         //    assertNotNull(newProduct);
         //    assertNull(newProduct.getUpdatedAt());
         //    assertEquals("iPhone", newProduct.getName());
