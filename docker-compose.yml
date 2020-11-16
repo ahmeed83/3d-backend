@@ -16,7 +16,7 @@ services:
 
   backend:
     build: .
-    image: webshop3dapp
+    image: ahmed83/webshop3dapp:latest
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
