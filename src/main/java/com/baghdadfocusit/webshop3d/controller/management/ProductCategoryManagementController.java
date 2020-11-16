@@ -4,13 +4,15 @@ import com.baghdadfocusit.webshop3d.model.category.CategoryJsonRequest;
 import com.baghdadfocusit.webshop3d.model.category.CategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.service.CategoryService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,15 +44,16 @@ public class ProductCategoryManagementController {
 
     @PostMapping("/add-category")
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
-    public ResponseEntity<String> createCategory(@Valid @RequestBody CategoryJsonRequest category) {
-        return ResponseEntity.accepted()
-                .body(categoryService.creatCategoryAndGetCategoryName(category));
+    public ResponseEntity<HttpStatus> createCategory(@ModelAttribute @Valid CategoryJsonRequest category) {
+        categoryService.creatCategory(category);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/update-category")
+    @PutMapping("/update-category")
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
-    public void updateCategory(@Valid @RequestBody CategoryJsonRequest category) {
-        categoryService.updateCategoryAndGetCategoryName(category);
+    public ResponseEntity<HttpStatus> editCategory(@ModelAttribute @Valid CategoryJsonRequest category) {
+        categoryService.editCategory(category);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("{categoryId}")

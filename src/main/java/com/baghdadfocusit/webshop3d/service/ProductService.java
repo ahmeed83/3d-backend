@@ -7,6 +7,7 @@ import com.baghdadfocusit.webshop3d.model.product.ProductJsonRequest;
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonResponse;
 import com.baghdadfocusit.webshop3d.model.product.ProductUpdatePriceRequest;
 import com.baghdadfocusit.webshop3d.repository.ProductRepository;
+import com.baghdadfocusit.webshop3d.service.util.ImageAwsS3Saver;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +39,11 @@ import static org.apache.http.entity.ContentType.IMAGE_PNG;
 @RequiredArgsConstructor
 public class ProductService {
 
-    @Value("${aws.s3.bucket}")
-    private String bucket;
-    private final ProductRepository productRepository;
-    private final AmazonFileStore amazonFileStore;
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
+
+    private final ProductRepository productRepository;
+
+    private final ImageAwsS3Saver imageAwsS3Saver;
     
     /**
      * Get All Filtered products.
@@ -125,8 +126,8 @@ public class ProductService {
      * @param productRequest productRequest
      */
     public void createProduct(ProductJsonRequest productRequest) {
-        //TODO: final String imageLink = saveImageInAmazonAndGetLink(productRequest.getProductImage());
-        final String imageLink = "hello";
+//        final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(productRequest.getProductImage());
+        final String imageLink = "imageLink";
         final Product product = Product.builder().createdAt(LocalDate.now())
                                                  .name(productRequest.getProductName())
                                                  .price(productRequest.getProductPrice())
@@ -150,8 +151,8 @@ public class ProductService {
         Product product = productRepository.findById(UUID.fromString(productRequest.getId()))
                 .orElseThrow(() -> new IllegalArgumentException("No Product found!"));
 
-        //TODO: final String imageLink = saveImageInAmazonAndGetLink(productRequest.getProductImage());
-        final String imageLink = "hello";
+        //TODO: final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(productRequest.getProductImage());
+        final String imageLink = "imageLink";
         product.setName(productRequest.getProductName());
         product.setRecommended(productRequest.isRecommended());
         product.setCategoryId(UUID.fromString(productRequest.getCategoryId()));
@@ -194,39 +195,5 @@ public class ProductService {
         product.setUpdatedAt(LocalDate.now());
         productRepository.save(product);
         LOGGER.info("Recommended statue is updated for product with product id {} ", product.getId());
-    }
-
-    /**
-     * Save product image
-     *
-     * @param productImage productImage
-     * @return link of the image
-     */
-    private String saveImageInAmazonAndGetLink(final MultipartFile productImage) {
-        isImage(productImage);
-        final Map<String, String> metadata = getMetaData(productImage);
-        final String path = String.format("%s", bucket);
-        final String fileName = String.format("%s-%s", UUID.randomUUID(), LocalDateTime.now());
-        try {
-            LOGGER.info("Uploading image with name= " + fileName);
-            amazonFileStore.saveImageInAmazon(path, fileName, Optional.of(metadata), productImage.getInputStream());
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        return amazonFileStore.getImageUrl(bucket, fileName);
-    }
-
-    private Map<String, String> getMetaData(final MultipartFile productImage) {
-        final Map<String, String> metadata = new HashMap<>();
-        metadata.put("Content-Type", productImage.getContentType());
-        metadata.put("Content-Length", String.valueOf(productImage.getSize()));
-        return metadata;
-    }
-
-    private void isImage(final MultipartFile productImage) {
-        if (!Arrays.asList(IMAGE_JPEG.getMimeType(), IMAGE_PNG.getMimeType(), IMAGE_GIF.getMimeType())
-                .contains(productImage.getContentType())) {
-            throw new IllegalStateException("File must be an Image [" + productImage.getContentType() + "]");
-        }
     }
 }

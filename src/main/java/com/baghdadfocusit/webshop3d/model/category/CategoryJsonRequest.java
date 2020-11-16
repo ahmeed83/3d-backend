@@ -1,11 +1,10 @@
 package com.baghdadfocusit.webshop3d.model.category;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 
@@ -13,13 +12,11 @@ import javax.validation.constraints.NotNull;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CategoryJsonRequest {
 
     private String id;
     @NotNull
     private String name;
     @NotNull
-    private String img;
+    private MultipartFile img;
 }

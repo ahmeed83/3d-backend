@@ -47,7 +47,7 @@ public class ProductManagementController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
-    public ResponseEntity<String> createProduct(@ModelAttribute @Valid ProductJsonRequest product) {
+    public ResponseEntity<HttpStatus> createProduct(@ModelAttribute @Valid ProductJsonRequest product) {
         productService.createProduct(product);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

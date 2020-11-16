@@ -5,6 +5,8 @@ import com.baghdadfocusit.webshop3d.exception.category.CategoryAlreadyExistsExce
 import com.baghdadfocusit.webshop3d.model.category.CategoryJsonRequest;
 import com.baghdadfocusit.webshop3d.model.category.CategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.repository.CategoryRepository;
+import com.baghdadfocusit.webshop3d.service.util.ImageAwsS3Saver;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -20,19 +22,13 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
-
-    /**
-     * Constructor.
-     *
-     * @param categoryRepository categoryRepository
-     */
-    public CategoryService(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
+    private final ImageAwsS3Saver imageAwsS3Saver;
+    
 
     /**
      * Get all categories.
@@ -73,38 +69,41 @@ public class CategoryService {
     /**
      * Create category.
      *
-     * @param categoryJson category json
+     * @param categoryRequest category json
      * @return category name created
      */
-    public String creatCategoryAndGetCategoryName(final CategoryJsonRequest categoryJson) {
-        categoryRepository.findCategoryByNameIgnoreCase(categoryJson.getName()).
+    public void creatCategory(final CategoryJsonRequest categoryRequest) {
+//        final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getImg());
+        final String imageLink = "imageLink";
+        categoryRepository.findCategoryByNameIgnoreCase(categoryRequest.getName()).
                 ifPresent(s -> {
                     throw new CategoryAlreadyExistsException();
                 });
         final Category category = Category.builder()
-                .name(categoryJson.getName())
-                .img(categoryJson.getImg())
+                .name(categoryRequest.getName())
+                .img(imageLink)
                 .createdAt(LocalDate.now())
                 .build();
         final var savedCategory = categoryRepository.save(category);
         LOGGER.info("Category is saved with category Id: {}", savedCategory.getId());
-        return savedCategory.getName();
     }
 
     public void deleteCategory(final String categoryId) {
         categoryRepository.deleteById(UUID.fromString(categoryId));
     }
 
-    public void updateCategoryAndGetCategoryName(final CategoryJsonRequest categoryJson) {
-        categoryRepository.findCategoryByNameIgnoreCase(categoryJson.getName()).
+    public void editCategory(final CategoryJsonRequest categoryRequest) {
+//        final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getImg());
+        final String imageLink = "imageLink";
+        categoryRepository.findCategoryByNameIgnoreCase(categoryRequest.getName()).
                 ifPresent(s -> {
                     throw new CategoryAlreadyExistsException();
                 });
-        Category category = categoryRepository.findById(UUID.fromString(categoryJson.getId()))
+        Category category = categoryRepository.findById(UUID.fromString(categoryRequest.getId()))
                                                                 .orElseThrow(IllegalArgumentException::new);
-        category.setName(categoryJson.getName());
-        category.setImg(categoryJson.getImg());
+        category.setName(categoryRequest.getName());
+        category.setImg(imageLink);
         final var savedCategory = categoryRepository.save(category);
-        LOGGER.info("Category with id: {} is updated with name: {}", savedCategory.getId(), categoryJson.getName());
+        LOGGER.info("Category with id: {} is updated with name: {}", savedCategory.getId(), categoryRequest.getName());
     }
 }
