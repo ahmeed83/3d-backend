@@ -28,7 +28,6 @@ public class RegistrationController {
     @PostMapping("sign-up")
     public ResponseEntity registerNewUser(@RequestBody ApplicationUser newUser) throws Exception {
         applicationUserService.saveApplicationUser(newUser);
-        //TODO: after successful registration, redirect to the login page in the frontend
         return ResponseEntity.ok().build();
     }
 }

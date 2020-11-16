@@ -47,26 +47,17 @@ public class EmailService {
                 .append(": ")
                 .append(product.getPrice())
                 .append(" ] "));
-        //TODO: fix this email thing
-        String emailContent = "";
-//        String emailContent = """
-//                <html>
-//                    <body>
-//                        <h3>طلبية البضاعة </h3>
-//                        <p>Customer name: %s</p>
-//                        <p>District: %s</p>
-//                        <p>Additional District: %s</p>
-//                        <p>Mobile Number:%s</p>
-//                        <p>Email: %s</p>
-//                        <p>Company Name: %s</p>
-//                        <p>City: %s</p>
-//                        <p>Products: %s</p>
-//                        <p>Total price: %s</p>
-//                    </body>
-//                </html>
-//                """.formatted(order.getName(), order.getDistrict(), order.getDistrict2(), order.getMobileNumber(),
-//                              order.getEmail(), order.getCompanyName(), order.getCity(), productSB,
-//                              order.getTotalAmount());
+        String emailContent = "<html>\n"
+                + "<body>\n<h3>طلبية البضاعة </h3>\n<p>Customer name: " + order.getName()
+                + " </p>\n<p>District: " + order.getDistrict()
+                + " </p>\n<p>Additional District: " + order.getDistrict2()
+                + " </p>\n<p>Mobile Number: " + order.getMobileNumber()
+                + " </p>\n<p>Email: " + order.getEmail()
+                + " </p>\n<p>Company Name: " + order.getCompanyName()
+                + " </p>\n<p>City: " + order.getCity()
+                + " </p>\n<p>Products: " + productSB
+                + " </p>\n<p>Total price: " + order.getTotalAmount()
+                + " </p>\n</body>\n</html>";
         helper.setText(emailContent, true);
         javaMailSender.send(msg);
     }

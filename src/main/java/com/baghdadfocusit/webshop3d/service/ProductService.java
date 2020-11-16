@@ -72,7 +72,9 @@ public class ProductService {
      * @param productId productId
      */
     public void deleteProduct(String productId) {
-        productRepository.deleteById(UUID.fromString(productId));
+        Product product = productRepository.findById(UUID.fromString(productId))
+                .orElseThrow(ProductNotFoundException::new);
+        productRepository.deleteById(product.getId());
     }
 
     /**

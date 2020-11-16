@@ -70,7 +70,6 @@ public class ProductManagementController {
     @DeleteMapping("{productId}")
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
     public ResponseEntity<HttpStatus> deleteProduct(@PathVariable String productId) {
-        //TODO: if product is not there return a proper exception with 404
         productService.deleteProduct(productId);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
@@ -79,7 +78,6 @@ public class ProductManagementController {
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
     public ResponseEntity<HttpStatus> updateProductPrice(@PathVariable String productId,
                                                          @RequestBody ProductUpdatePriceRequest updatePriceRequest) {
-        //TODO: if product is not there return a proper exception with 404
         productService.updateProductPrice(productId, updatePriceRequest);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
