@@ -1,7 +1,8 @@
 package com.baghdadfocusit.webshop3d.service;
 
-import com.baghdadfocusit.webshop3d.configuration.aws.AmazonFileStore;
 import com.baghdadfocusit.webshop3d.entities.Product;
+import com.baghdadfocusit.webshop3d.exception.product.ProductAlreadyExistsException;
+import com.baghdadfocusit.webshop3d.exception.product.ProductNotFoundException;
 import com.baghdadfocusit.webshop3d.model.category.CategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonRequest;
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonResponse;
@@ -11,29 +12,18 @@ import com.baghdadfocusit.webshop3d.service.util.ImageAwsS3Saver;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static org.apache.http.entity.ContentType.IMAGE_GIF;
-import static org.apache.http.entity.ContentType.IMAGE_JPEG;
-import static org.apache.http.entity.ContentType.IMAGE_PNG;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +34,7 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     private final ImageAwsS3Saver imageAwsS3Saver;
-    
+
     /**
      * Get All Filtered products.
      *
@@ -53,27 +43,32 @@ public class ProductService {
     public Page<ProductJsonResponse> getAllFilteredProducts(Optional<Integer> page, Optional<String> sortBy) {
         Page<Product> productPage;
         if (sortBy.isPresent()) {
-            productPage = productRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC,
-                                                                   sortBy.orElse("name")));
+            productPage = productRepository.findAll(
+                    PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC, sortBy.orElse("name")));
         } else {
             productPage = productRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
         }
         return new PageImpl<>(productPage.getContent()
                                       .stream()
-                                      .map(product -> new ProductJsonResponse(product.getId(), product.getName(), 
+                                      .map(product -> new ProductJsonResponse(product.getId(), product.getName(),
                                                                               product.getPrice(), product.isSale(),
-                                                                              product.isRecommended(), product.getPicLocation(), 
-                                                                              product.getDescription(), product.getQuantity(),
+                                                                              product.isRecommended(),
+                                                                              product.getPicLocation(),
+                                                                              product.getDescription(),
+                                                                              product.getQuantity(),
                                                                               CategoryJsonResponse.builder()
-                                                                                      .id(String.valueOf(product.getCategoryId()))
-                                                                                      .name(product.getCategory().getName())
-                                                                                      .build())).collect(Collectors.toList()),
-                              productPage.getPageable(),
+                                                                                      .id(String.valueOf(
+                                                                                              product.getCategoryId()))
+                                                                                      .name(product.getCategory()
+                                                                                                    .getName())
+                                                                                      .build()))
+                                      .collect(Collectors.toList()), productPage.getPageable(),
                               productPage.getTotalElements());
     }
 
     /**
      * Delete one product
+     *
      * @param productId productId
      */
     public void deleteProduct(String productId) {
@@ -82,25 +77,30 @@ public class ProductService {
 
     /**
      * Get Product by cateogry ID
+     *
      * @param categoryId categoryId
-     * @param page page
-     * @param sortBy sortBy
+     * @param page       page
+     * @param sortBy     sortBy
      * @return Page<ProductJsonResponse>
      */
-    public Page<ProductJsonResponse> getProductsByCategoryId(Optional<String> categoryId,
-                                                             Optional<Integer> page,
+    public Page<ProductJsonResponse> getProductsByCategoryId(Optional<String> categoryId, Optional<Integer> page,
                                                              Optional<String> sortBy) {
         return new PageImpl<>(productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
-                                                           PageRequest.of(page.orElse(0), 5, Direction.ASC,
-                                                                          sortBy.orElse("name")))
-                .stream().map(product -> new ProductJsonResponse(product.getId(), product.getName(),
-                                                                product.getPrice(), product.isSale(),
-                                                                product.isRecommended(), product.getPicLocation(),
-                                                                product.getDescription(), product.getQuantity(), 
-                                                                 CategoryJsonResponse.builder()
-                                                                         .id(String.valueOf(product.getCategoryId()))
-                                                                         .build()))
-                .collect(Collectors.toList()));
+                                                                          PageRequest.of(page.orElse(0), 5,
+                                                                                         Direction.ASC,
+                                                                                         sortBy.orElse("name")))
+                                      .stream()
+                                      .map(product -> new ProductJsonResponse(product.getId(), product.getName(),
+                                                                              product.getPrice(), product.isSale(),
+                                                                              product.isRecommended(),
+                                                                              product.getPicLocation(),
+                                                                              product.getDescription(),
+                                                                              product.getQuantity(),
+                                                                              CategoryJsonResponse.builder()
+                                                                                      .id(String.valueOf(
+                                                                                              product.getCategoryId()))
+                                                                                      .build()))
+                                      .collect(Collectors.toList()));
     }
 
     /**
@@ -110,14 +110,14 @@ public class ProductService {
      */
     public List<ProductJsonResponse> getRecommendedProducts() {
         return productRepository.findProductsByRecommendedTrue()
-                .stream().map(product -> new ProductJsonResponse(product.getId(), product.getName(),
-                                                                 product.getPrice(), product.isSale(),
-                                                                 product.isRecommended(), product.getPicLocation(),
-                                                                 product.getDescription(), product.getQuantity(),
-                                                                 CategoryJsonResponse.builder()
-                                                                         .id(String.valueOf(product.getCategoryId()))
-                                                                         .build()))
-                                                .collect(Collectors.toList());
+                .stream()
+                .map(product -> new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
+                                                        product.isSale(), product.isRecommended(),
+                                                        product.getPicLocation(), product.getDescription(),
+                                                        product.getQuantity(), CategoryJsonResponse.builder()
+                                                                .id(String.valueOf(product.getCategoryId()))
+                                                                .build()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -126,18 +126,23 @@ public class ProductService {
      * @param productRequest productRequest
      */
     public void createProduct(ProductJsonRequest productRequest) {
-//        final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(productRequest.getProductImage());
+        //TODO:final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(productRequest.getProductImage());
+        productRepository.findProductByNameIgnoreCase(productRequest.getProductName()).
+                ifPresent(s -> {
+                    throw new ProductAlreadyExistsException();
+                });
         final String imageLink = "imageLink";
-        final Product product = Product.builder().createdAt(LocalDate.now())
-                                                 .name(productRequest.getProductName())
-                                                 .price(productRequest.getProductPrice())
-                                                 .picLocation(imageLink)
-                                                 .quantity(productRequest.getQuantity())
-                                                 .sale(false)
-                                                 .recommended(productRequest.isRecommended())
-                                                 .description(productRequest.getDescription())
-                                                 .categoryId(UUID.fromString(productRequest.getCategoryId()))
-                                                 .build();
+        final Product product = Product.builder()
+                .createdAt(LocalDate.now())
+                .name(productRequest.getProductName())
+                .price(productRequest.getProductPrice())
+                .picLocation(imageLink)
+                .quantity(productRequest.getQuantity())
+                .sale(false)
+                .recommended(productRequest.isRecommended())
+                .description(productRequest.getDescription())
+                .categoryId(UUID.fromString(productRequest.getCategoryId()))
+                .build();
         final var savedProduct = productRepository.save(product);
         LOGGER.info("Product is saved with product Id: {}", savedProduct.getId());
     }
@@ -148,10 +153,14 @@ public class ProductService {
      * @param productRequest productRequest
      */
     public void editProduct(final ProductJsonRequest productRequest) {
+        productRepository.findProductByNameIgnoreCase(productRequest.getProductName()).
+                ifPresent(s -> {
+                    throw new ProductAlreadyExistsException();
+                });
         Product product = productRepository.findById(UUID.fromString(productRequest.getId()))
-                .orElseThrow(() -> new IllegalArgumentException("No Product found!"));
+                .orElseThrow(ProductNotFoundException::new);
 
-        //TODO: final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(productRequest.getProductImage());
+        //TODO:final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(productRequest.getProductImage());
         final String imageLink = "imageLink";
         product.setName(productRequest.getProductName());
         product.setRecommended(productRequest.isRecommended());
@@ -171,12 +180,12 @@ public class ProductService {
     /**
      * Update product price.
      *
-     * @param productId productId
+     * @param productId          productId
      * @param updatePriceRequest updatePriceRequest
      */
     public void updateProductPrice(final String productId, final ProductUpdatePriceRequest updatePriceRequest) {
         Product product = productRepository.findById(UUID.fromString(productId))
-                .orElseThrow(() -> new IllegalArgumentException("No Product found!"));
+                .orElseThrow(ProductNotFoundException::new);
         product.setPrice(updatePriceRequest.getProductPrice());
         product.setUpdatedAt(LocalDate.now());
         productRepository.save(product);
@@ -190,7 +199,7 @@ public class ProductService {
      */
     public void makeRecommended(final String productId) {
         Product product = productRepository.findById(UUID.fromString(productId))
-                .orElseThrow(() -> new IllegalArgumentException("No Product found!"));
+                .orElseThrow(ProductNotFoundException::new);
         product.setRecommended(!product.isRecommended());
         product.setUpdatedAt(LocalDate.now());
         productRepository.save(product);

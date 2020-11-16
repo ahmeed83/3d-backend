@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -17,11 +18,11 @@ public interface ProductRepository extends PagingAndSortingRepository<Product, U
     @Query("SELECT p FROM Product p LEFT JOIN Category c ON (c.id = p.category) WHERE UPPER(p.name)"
             + " LIKE CONCAT" + "('%',UPPER(:productName),'%') AND UPPER(c.name) LIKE CONCAT('%',UPPER(:categoryName),'%')")
     Page<Product> getFilterProducts(@Param("productName") String productName,
-                                    @Param("categoryName") String categoryName,
-                                    Pageable pageable);
+                                    @Param("categoryName") String categoryName, Pageable pageable);
 
-    Page<Product> findProductsByCategory_Id(@Param("categoryId") UUID categoryId,
-                                            Pageable pageable);
+    Page<Product> findProductsByCategory_Id(@Param("categoryId") UUID categoryId, Pageable pageable);
 
     List<Product> findProductsByRecommendedTrue();
+
+    Optional<Product> findProductByNameIgnoreCase(String productName);
 }

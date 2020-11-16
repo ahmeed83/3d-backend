@@ -2,6 +2,7 @@ package com.baghdadfocusit.webshop3d.service;
 
 import com.baghdadfocusit.webshop3d.entities.Category;
 import com.baghdadfocusit.webshop3d.exception.category.CategoryAlreadyExistsException;
+import com.baghdadfocusit.webshop3d.exception.category.CategoryNotFoundException;
 import com.baghdadfocusit.webshop3d.model.category.CategoryJsonRequest;
 import com.baghdadfocusit.webshop3d.model.category.CategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.repository.CategoryRepository;
@@ -28,7 +29,7 @@ public class CategoryService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
     private final ImageAwsS3Saver imageAwsS3Saver;
-    
+
 
     /**
      * Get all categories.
@@ -38,8 +39,7 @@ public class CategoryService {
     public List<CategoryJsonResponse> getAllCategories() {
         List<Category> categories = (List<Category>) categoryRepository.findAll();
         return categories.stream()
-                .map(category -> new CategoryJsonResponse(category.getId().toString(),
-                                                          category.getName(),
+                .map(category -> new CategoryJsonResponse(category.getId().toString(), category.getName(),
                                                           category.getImg()))
                 .collect(Collectors.toList());
     }
@@ -52,17 +52,16 @@ public class CategoryService {
     public Page<CategoryJsonResponse> getFilterCategories(Optional<Integer> page, Optional<String> sortBy) {
         Page<Category> categoriesPage;
         if (sortBy.isPresent()) {
-            categoriesPage = categoryRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC,
-                                                                       sortBy.orElse("name")));
+            categoriesPage = categoryRepository.findAll(
+                    PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC, sortBy.orElse("name")));
         } else {
             categoriesPage = categoryRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
         }
         return new PageImpl<>(categoriesPage.getContent()
                                       .stream()
                                       .map(category -> new CategoryJsonResponse(category.getId().toString(),
-                                                                                category.getName(),
-                                                                                category.getImg())).collect(Collectors.toList()),
-                              categoriesPage.getPageable(),
+                                                                                category.getName(), category.getImg()))
+                                      .collect(Collectors.toList()), categoriesPage.getPageable(),
                               categoriesPage.getTotalElements());
     }
 
@@ -73,7 +72,7 @@ public class CategoryService {
      * @return category name created
      */
     public void creatCategory(final CategoryJsonRequest categoryRequest) {
-//        final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getImg());
+        //TODO:final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getImg());
         final String imageLink = "imageLink";
         categoryRepository.findCategoryByNameIgnoreCase(categoryRequest.getName()).
                 ifPresent(s -> {
@@ -93,14 +92,14 @@ public class CategoryService {
     }
 
     public void editCategory(final CategoryJsonRequest categoryRequest) {
-//        final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getImg());
+        //TODO:final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getImg());
         final String imageLink = "imageLink";
         categoryRepository.findCategoryByNameIgnoreCase(categoryRequest.getName()).
                 ifPresent(s -> {
                     throw new CategoryAlreadyExistsException();
                 });
         Category category = categoryRepository.findById(UUID.fromString(categoryRequest.getId()))
-                                                                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(CategoryNotFoundException::new);
         category.setName(categoryRequest.getName());
         category.setImg(imageLink);
         final var savedCategory = categoryRepository.save(category);

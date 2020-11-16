@@ -2,6 +2,8 @@ package com.baghdadfocusit.webshop3d.service;
 
 import com.baghdadfocusit.webshop3d.entities.Order;
 import com.baghdadfocusit.webshop3d.entities.Product;
+import com.baghdadfocusit.webshop3d.exception.order.OrderNotFoundException;
+import com.baghdadfocusit.webshop3d.exception.product.ProductNotFoundException;
 import com.baghdadfocusit.webshop3d.model.order.OrderProductRequestJson;
 import com.baghdadfocusit.webshop3d.model.order.OrderProductsResponse;
 import com.baghdadfocusit.webshop3d.model.order.OrderRequestJson;
@@ -35,20 +37,18 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final EmailService emailService;
 
-    public OrderService(final OrderRepository orderRepository,
-                        final ProductRepository productRepository,
+    public OrderService(final OrderRepository orderRepository, final ProductRepository productRepository,
                         final EmailService emailService) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.emailService = emailService;
     }
 
-    public Page<OrderResponseJson> getFilterOrders(Optional<Integer> page,
-                                                   Optional<String> sortBy) {
+    public Page<OrderResponseJson> getFilterOrders(Optional<Integer> page, Optional<String> sortBy) {
         Page<Order> orderPage;
         if (sortBy.isPresent()) {
-            orderPage = orderRepository.findAll(PageRequest.of(page.orElse(0), 25, Sort.Direction.ASC,
-                                                                       sortBy.orElse("name")));
+            orderPage = orderRepository.findAll(
+                    PageRequest.of(page.orElse(0), 25, Sort.Direction.ASC, sortBy.orElse("name")));
         } else {
             orderPage = orderRepository.findAll(PageRequest.of(page.orElse(0), 25, Sort.unsorted()));
         }
@@ -80,7 +80,7 @@ public class OrderService {
         final Set<Product> products = new HashSet<>();
         for (OrderProductRequestJson orderedProduct : orderJson.getOrderedProducts()) {
             Product product = productRepository.findById(UUID.fromString(orderedProduct.getProductId()))
-                    .orElseThrow(() -> new IllegalArgumentException("No Products found when inserting a new Order"));
+                    .orElseThrow(ProductNotFoundException::new);
             order.addProduct(product, orderedProduct.getProductCount(),
                              orderedProduct.getProductCount() * product.getPrice());
             products.add(product);
@@ -111,9 +111,10 @@ public class OrderService {
         }
 
         LOGGER.info("Order is successfully saved with category Id: {}", savedOrder.getId());
-        return new OrderResponseJson(order.getId(), order.getCreatedAt(), order.getCity(), order.getName(), order.getOrderTrackId(),
-                                     order.getTotalAmount(), order.getOrderState(), order.getCompanyName(), order.getDistrict(),
-                                     order.getDistrict2(), order.getMobileNumber(), order.getEmail(), order.getNotes(),
+        return new OrderResponseJson(order.getId(), order.getCreatedAt(), order.getCity(), order.getName(),
+                                     order.getOrderTrackId(), order.getTotalAmount(), order.getOrderState(),
+                                     order.getCompanyName(), order.getDistrict(), order.getDistrict2(),
+                                     order.getMobileNumber(), order.getEmail(), order.getNotes(),
                                      order.getProducts().size(), order.getOrderItems()
                                              .stream()
                                              .map(orderItem -> new OrderProductsResponse(
@@ -124,13 +125,14 @@ public class OrderService {
     }
 
     public OrderStatusResponse checkStatusOrder(final String orderTrackId) {
-        Order order = orderRepository.findOrderByOrderTrackId(orderTrackId).orElseThrow(IllegalArgumentException::new);
+        Order order = orderRepository.findOrderByOrderTrackId(orderTrackId).orElseThrow(OrderNotFoundException::new);
         LOGGER.info("Order with {} ID is successfully found", orderTrackId);
         return new OrderStatusResponse(order.getCreatedAt(), order.getName(), order.getOrderState());
     }
 
     public void updateOrderStatus(final OrderStatusUpdateRequest orderStatusUpdateRequest) {
-        Order order = orderRepository.findOrderById(UUID.fromString(orderStatusUpdateRequest.getId())).orElseThrow(IllegalArgumentException::new);
+        Order order = orderRepository.findOrderById(UUID.fromString(orderStatusUpdateRequest.getId()))
+                .orElseThrow(OrderNotFoundException::new);
         order.setOrderState(orderStatusUpdateRequest.getOrderState());
         orderRepository.save(order);
         LOGGER.info("Order with {} ID is updated", orderStatusUpdateRequest.getId());

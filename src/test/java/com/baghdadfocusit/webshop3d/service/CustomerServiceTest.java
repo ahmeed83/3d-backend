@@ -1,7 +1,5 @@
 package com.baghdadfocusit.webshop3d.service;
 
-import com.baghdadfocusit.webshop3d.entities.Customer;
-import com.baghdadfocusit.webshop3d.repository.CustomerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

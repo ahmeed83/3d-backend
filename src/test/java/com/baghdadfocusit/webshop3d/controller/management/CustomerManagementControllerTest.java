@@ -1,7 +1,5 @@
 package com.baghdadfocusit.webshop3d.controller.management;
 
-import com.baghdadfocusit.webshop3d.entities.Customer;
-import com.baghdadfocusit.webshop3d.service.CustomerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
