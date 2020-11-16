@@ -4,6 +4,7 @@ import com.baghdadfocusit.webshop3d.model.order.OrderResponseJson;
 import com.baghdadfocusit.webshop3d.model.order.OrderStatusUpdateRequest;
 import com.baghdadfocusit.webshop3d.service.OrderService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,17 +31,20 @@ public class OrderManagementController {
     public OrderManagementController(final OrderService orderService) {
         this.orderService = orderService;
     }
-    
+
     @GetMapping
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
     public ResponseEntity<Page<OrderResponseJson>> getAllFilterOrders(@RequestParam Optional<Integer> page,
                                                                       @RequestParam Optional<String> sortBy) {
-        return ResponseEntity.ok(orderService.getFilterOrders(page, sortBy));
+        return new ResponseEntity<>(orderService.getFilterOrders(page, sortBy), HttpStatus.OK);
+
     }
 
     @PostMapping
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
-    public void updateOrderStatus(@RequestBody @Valid OrderStatusUpdateRequest orderStatusUpdateRequest) {
+    public ResponseEntity<HttpStatus> updateOrderStatus(
+            @RequestBody @Valid OrderStatusUpdateRequest orderStatusUpdateRequest) {
         orderService.updateOrderStatus(orderStatusUpdateRequest);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }

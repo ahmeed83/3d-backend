@@ -33,8 +33,6 @@ public class OrderController {
 
     @GetMapping("/checkStatus/{orderTrackId}")
     public ResponseEntity<OrderStatusResponse> checkStatusOrder(@PathVariable final String orderTrackId) {
-        
-        return ResponseEntity.accepted()
-                .body(orderService.checkStatusOrder(orderTrackId));
+        return new ResponseEntity<>(orderService.checkStatusOrder(orderTrackId), HttpStatus.OK);
     }
 }

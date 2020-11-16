@@ -3,6 +3,7 @@ package com.baghdadfocusit.webshop3d.controller;
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonResponse;
 import com.baghdadfocusit.webshop3d.service.ProductService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,14 +28,13 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<Page<ProductJsonResponse>> getProductsByCategory(@RequestParam Optional<String> categoryId,
-                                                               @RequestParam Optional<Integer> page,
-                                                               @RequestParam Optional<String> sortBy) {
-        return ResponseEntity.ok(productService.getProductsByCategoryId(categoryId, page, sortBy));
+                                                                           @RequestParam Optional<Integer> page,
+                                                                           @RequestParam Optional<String> sortBy) {
+        return new ResponseEntity<>(productService.getProductsByCategoryId(categoryId, page, sortBy), HttpStatus.OK);
     }
 
     @GetMapping("recommended")
     public ResponseEntity<List<ProductJsonResponse>> getRecommendedProducts() {
-        return ResponseEntity.ok()
-                .body(productService.getRecommendedProducts());
+        return new ResponseEntity<>(productService.getRecommendedProducts(), HttpStatus.OK);
     }
 }

@@ -41,7 +41,8 @@ public class ProductManagementController {
 
     @GetMapping()
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
-    public ResponseEntity<Page<ProductJsonResponse>> getAllFilteredProducts(@RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+    public ResponseEntity<Page<ProductJsonResponse>> getAllFilteredProducts(@RequestParam Optional<Integer> page,
+                                                                            @RequestParam Optional<String> sortBy) {
         return new ResponseEntity<>(productService.getAllFilteredProducts(page, sortBy), HttpStatus.OK);
     }
 
@@ -76,7 +77,8 @@ public class ProductManagementController {
 
     @PatchMapping("{productId}")
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
-    public ResponseEntity<HttpStatus> updateProductPrice(@PathVariable String productId, @RequestBody ProductUpdatePriceRequest updatePriceRequest) {
+    public ResponseEntity<HttpStatus> updateProductPrice(@PathVariable String productId,
+                                                         @RequestBody ProductUpdatePriceRequest updatePriceRequest) {
         //TODO: if product is not there return a proper exception with 404
         productService.updateProductPrice(productId, updatePriceRequest);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);

@@ -25,13 +25,13 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("management/v1/categories")
-public class ProductCategoryManagementController {
+public class CategoryManagementController {
 
     private static final String HAS_ROLE_ADMIN_AND_EMPLOYEE = "hasAnyRole('ROLE_ADMIN, ROLE_EMPLOYEE')";
 
     private final CategoryService categoryService;
 
-    public ProductCategoryManagementController(CategoryService categoryService) {
+    public CategoryManagementController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
@@ -39,7 +39,7 @@ public class ProductCategoryManagementController {
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
     public ResponseEntity<Page<CategoryJsonResponse>> getCategories(@RequestParam Optional<Integer> page,
                                                                     @RequestParam Optional<String> sortBy) {
-        return ResponseEntity.accepted().body(categoryService.getFilterCategories(page, sortBy));
+        return new ResponseEntity<>(categoryService.getFilterCategories(page, sortBy), HttpStatus.OK);
     }
 
     @PostMapping("/add-category")
@@ -58,7 +58,8 @@ public class ProductCategoryManagementController {
 
     @DeleteMapping("{categoryId}")
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
-    public void deleteCategory(@PathVariable final String categoryId) {
+    public ResponseEntity<HttpStatus> deleteCategory(@PathVariable final String categoryId) {
         categoryService.deleteCategory(categoryId);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }

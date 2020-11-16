@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 @ActiveProfiles("test")
-public class ProductCategoryManagementControllerTest {
+public class CategoryManagementControllerTest {
 
     private CategoryJsonResponse categoryJson;
 
