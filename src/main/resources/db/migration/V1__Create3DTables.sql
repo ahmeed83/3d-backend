@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS PRODUCT
     created_at   DATE                NOT NULL,
     updated_at   DATE,
     category_id  UUID                NOT NULL,
-    name         VARCHAR(100)  NOT NULL,
+    name         VARCHAR(300) UNIQUE NOT NULL,
     pic_location VARCHAR(500)        NOT NULL,
     price        VARCHAR(20)         NOT NULL,
     old_price    VARCHAR(20),

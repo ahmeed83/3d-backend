@@ -43,7 +43,7 @@ public class ProductService {
         Page<Product> productPage;
         if (sortBy.isPresent()) {
             productPage = productRepository.findAll(
-                    PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC, sortBy.orElse("name")));
+                    PageRequest.of(page.orElse(0), 25, Sort.Direction.ASC, sortBy.orElse("name")));
         } else {
             productPage = productRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
         }
@@ -221,5 +221,14 @@ public class ProductService {
         product.setUpdatedAt(LocalDate.now());
         productRepository.save(product);
         LOGGER.info("Recommended statue is updated for product with product id {} ", product.getId());
+    }
+
+    public void makeOutOfStockRecommended(final String productId) {
+        Product product = productRepository.findById(UUID.fromString(productId))
+                .orElseThrow(ProductNotFoundException::new);
+        product.setOutOfStock(!product.isOutOfStock());
+        product.setUpdatedAt(LocalDate.now());
+        productRepository.save(product);
+        LOGGER.info("Out of stock is updated for product with product id {} ", product.getId());
     }
 }

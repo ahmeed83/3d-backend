@@ -67,6 +67,13 @@ public class ProductManagementController {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("make-out-of-stock/{productId}")
+    @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
+    public ResponseEntity<HttpStatus> makeOutOfStockRecommended(@PathVariable String productId) {
+        productService.makeOutOfStockRecommended(productId);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
     @DeleteMapping("{productId}")
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
     public ResponseEntity<HttpStatus> deleteProduct(@PathVariable String productId) {
