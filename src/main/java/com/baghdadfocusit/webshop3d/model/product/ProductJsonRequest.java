@@ -16,17 +16,17 @@ import javax.validation.constraints.NotNull;
 public class ProductJsonRequest {
 
     private String id;
-    private String description;
-    private boolean recommended;
-    private boolean sale;
     @NotNull
     private String productName;
     @NotNull
-    private double productPrice;
-    @NotNull
     private String categoryId;
     @NotNull
-    private int quantity;
+    private double productPrice;
+    private double productOldPrice;
+    private String description;
+    private boolean recommended;
+    private boolean sale;
+    private boolean outOfStock;
     @NotNull
     private MultipartFile productImage;
 }

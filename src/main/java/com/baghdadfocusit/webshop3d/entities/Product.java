@@ -30,10 +30,10 @@ public class Product extends BaseModel {
     private String picLocation;
     @NotNull
     private double price;
-    @NotNull
-    private int quantity;
-    private boolean sale;
+    private double oldPrice;
     private String description;
+    private boolean outOfStock;
+    private boolean sale;
     private boolean recommended;
     
     @JoinColumn(name = "category_id", insertable = false, updatable = false)

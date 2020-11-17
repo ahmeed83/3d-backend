@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -51,11 +50,12 @@ public class ProductService {
         return new PageImpl<>(productPage.getContent()
                                       .stream()
                                       .map(product -> new ProductJsonResponse(product.getId(), product.getName(),
-                                                                              product.getPrice(), product.isSale(),
-                                                                              product.isRecommended(),
-                                                                              product.getPicLocation(),
+                                                                              product.getPrice(),
                                                                               product.getDescription(),
-                                                                              product.getQuantity(),
+                                                                              product.getOldPrice(), product.isSale(),
+                                                                              product.isRecommended(),
+                                                                              product.isOutOfStock(),
+                                                                              product.getPicLocation(),
                                                                               CategoryJsonResponse.builder()
                                                                                       .id(String.valueOf(
                                                                                               product.getCategoryId()))
@@ -87,22 +87,34 @@ public class ProductService {
      */
     public Page<ProductJsonResponse> getProductsByCategoryId(Optional<String> categoryId, Optional<Integer> page,
                                                              Optional<String> sortBy) {
-        return new PageImpl<>(productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
-                                                                          PageRequest.of(page.orElse(0), 5,
-                                                                                         Direction.ASC,
-                                                                                         sortBy.orElse("name")))
+        Page<Product> productPage;
+        if (sortBy.isPresent()) {
+            productPage = productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
+                                                                      PageRequest.of(page.orElse(0), 10,
+                                                                                     Sort.Direction.ASC,
+                                                                                     sortBy.orElse("name")));
+        } else {
+            productPage = productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
+                                                                      PageRequest.of(page.orElse(0), 15,
+                                                                                     Sort.unsorted()));
+        }
+        return new PageImpl<>(productPage.getContent()
                                       .stream()
                                       .map(product -> new ProductJsonResponse(product.getId(), product.getName(),
-                                                                              product.getPrice(), product.isSale(),
-                                                                              product.isRecommended(),
-                                                                              product.getPicLocation(),
+                                                                              product.getPrice(),
                                                                               product.getDescription(),
-                                                                              product.getQuantity(),
+                                                                              product.getOldPrice(), product.isSale(),
+                                                                              product.isRecommended(),
+                                                                              product.isOutOfStock(),
+                                                                              product.getPicLocation(),
                                                                               CategoryJsonResponse.builder()
                                                                                       .id(String.valueOf(
                                                                                               product.getCategoryId()))
+                                                                                      .name(product.getCategory()
+                                                                                                    .getName())
                                                                                       .build()))
-                                      .collect(Collectors.toList()));
+                                      .collect(Collectors.toList()), productPage.getPageable(),
+                              productPage.getTotalElements());
     }
 
     /**
@@ -114,9 +126,10 @@ public class ProductService {
         return productRepository.findProductsByRecommendedTrue()
                 .stream()
                 .map(product -> new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
+                                                        product.getDescription(), product.getOldPrice(),
                                                         product.isSale(), product.isRecommended(),
-                                                        product.getPicLocation(), product.getDescription(),
-                                                        product.getQuantity(), CategoryJsonResponse.builder()
+                                                        product.isOutOfStock(), product.getPicLocation(),
+                                                        CategoryJsonResponse.builder()
                                                                 .id(String.valueOf(product.getCategoryId()))
                                                                 .build()))
                 .collect(Collectors.toList());
@@ -137,13 +150,14 @@ public class ProductService {
         final Product product = Product.builder()
                 .createdAt(LocalDate.now())
                 .name(productRequest.getProductName())
+                .categoryId(UUID.fromString(productRequest.getCategoryId()))
                 .price(productRequest.getProductPrice())
-                .picLocation(imageLink)
-                .quantity(productRequest.getQuantity())
+                .oldPrice(productRequest.getProductOldPrice())
+                .outOfStock(false)
                 .sale(false)
                 .recommended(productRequest.isRecommended())
                 .description(productRequest.getDescription())
-                .categoryId(UUID.fromString(productRequest.getCategoryId()))
+                .picLocation(imageLink)
                 .build();
         final var savedProduct = productRepository.save(product);
         LOGGER.info("Product is saved with product Id: {}", savedProduct.getId());
@@ -168,9 +182,10 @@ public class ProductService {
         product.setRecommended(productRequest.isRecommended());
         product.setCategoryId(UUID.fromString(productRequest.getCategoryId()));
         product.setPrice(productRequest.getProductPrice());
+        product.setOldPrice(productRequest.getProductOldPrice());
         product.setSale(productRequest.isSale());
+        product.setOutOfStock(productRequest.isOutOfStock());
         product.setDescription(productRequest.getDescription());
-        product.setQuantity(productRequest.getQuantity());
         product.setPicLocation(imageLink);
         product.setUpdatedAt(LocalDate.now());
 

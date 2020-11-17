@@ -22,14 +22,13 @@ public class ProductJsonResponse {
     private String name;
     @NotNull
     private double price;
+    private String description;
+    private double oldPrice;
     private boolean sale;
     private boolean recommended;
+    private boolean outOfStock;
     @NotNull
     private String picLocation;
-    @NotNull
-    private String description;
-    @NotNull
-    private int quantity;
     @NotNull
     private CategoryJsonResponse category;
 }

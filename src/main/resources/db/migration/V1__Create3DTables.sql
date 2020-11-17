@@ -25,17 +25,18 @@ CREATE TABLE IF NOT EXISTS CATEGORY
 
 CREATE TABLE IF NOT EXISTS PRODUCT
 (
-    id              UUID PRIMARY KEY NOT NULL,
-    created_at      DATE             NOT NULL,
-    updated_at      DATE,
-    category_id     UUID             NOT NULL,
-    name            VARCHAR(100)     NOT NULL,
-    quantity        INT              NOT NULL,
-    pic_location    VARCHAR(500)     NOT NULL,
-    price           VARCHAR(20)      NOT NULL,
-    description     VARCHAR(500),
-    sale            BOOLEAN,
-    recommended     BOOLEAN,
+    id           UUID PRIMARY KEY    NOT NULL,
+    created_at   DATE                NOT NULL,
+    updated_at   DATE,
+    category_id  UUID                NOT NULL,
+    name         VARCHAR(100)  NOT NULL,
+    pic_location VARCHAR(500)        NOT NULL,
+    price        VARCHAR(20)         NOT NULL,
+    old_price    VARCHAR(20),
+    description  VARCHAR(500),
+    out_of_stock BOOLEAN,
+    sale         BOOLEAN,
+    recommended  BOOLEAN,
     FOREIGN KEY (category_id) REFERENCES CATEGORY (id)
 );
 
@@ -67,22 +68,3 @@ CREATE TABLE order3d_products
     amount      DOUBLE PRECISION NOT NULL,
     CONSTRAINT order_product_pkey PRIMARY KEY (orders_id, products_id) -- explicit pk
 );
-
--- CREATE TABLE order_state
--- (
---     id          SMALLINT NOT NULL,
---     description VARCHAR(255),
---     name        VARCHAR(255),
---     PRIMARY KEY (id)
--- );
---
--- INSERT INTO order_state (description, name, id)
--- VALUES ('Order is received', 'RECEIVED', 0);
--- INSERT INTO order_state (description, name, id)
--- VALUES ('Order is in progress', 'IN_PROGRESS', 1);
--- INSERT INTO order_state (description, name, id)
--- VALUES ('Order is shipped', 'SHIPPED', 2);
--- INSERT INTO order_state (description, name, id)
--- VALUES ('Order is delivered by the customer', 'DELIVERED', 3);
--- INSERT INTO order_state (description, name, id)
--- VALUES ('Order is completed', 'COMPLETED', 4);
