@@ -90,7 +90,7 @@ public class ProductService {
         Page<Product> productPage;
         if (sortBy.isPresent()) {
             productPage = productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
-                                                                      PageRequest.of(page.orElse(0), 10,
+                                                                      PageRequest.of(page.orElse(0), 5,
                                                                                      Sort.Direction.ASC,
                                                                                      sortBy.orElse("name")));
         } else {
