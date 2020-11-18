@@ -47,23 +47,7 @@ public class ProductService {
         } else {
             productPage = productRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
         }
-        return new PageImpl<>(productPage.getContent()
-                                      .stream()
-                                      .map(product -> new ProductJsonResponse(product.getId(), product.getName(),
-                                                                              product.getPrice(),
-                                                                              product.getDescription(),
-                                                                              product.getOldPrice(), product.isSale(),
-                                                                              product.isRecommended(),
-                                                                              product.isOutOfStock(),
-                                                                              product.getPicLocation(),
-                                                                              CategoryJsonResponse.builder()
-                                                                                      .id(String.valueOf(
-                                                                                              product.getCategoryId()))
-                                                                                      .name(product.getCategory()
-                                                                                                    .getName())
-                                                                                      .build()))
-                                      .collect(Collectors.toList()), productPage.getPageable(),
-                              productPage.getTotalElements());
+        return buildProductJsonResponses(productPage);
     }
 
     /**
@@ -90,7 +74,7 @@ public class ProductService {
         Page<Product> productPage;
         if (sortBy.isPresent()) {
             productPage = productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
-                                                                      PageRequest.of(page.orElse(0), 5,
+                                                                      PageRequest.of(page.orElse(0), 15,
                                                                                      Sort.Direction.ASC,
                                                                                      sortBy.orElse("name")));
         } else {
@@ -98,23 +82,7 @@ public class ProductService {
                                                                       PageRequest.of(page.orElse(0), 15,
                                                                                      Sort.unsorted()));
         }
-        return new PageImpl<>(productPage.getContent()
-                                      .stream()
-                                      .map(product -> new ProductJsonResponse(product.getId(), product.getName(),
-                                                                              product.getPrice(),
-                                                                              product.getDescription(),
-                                                                              product.getOldPrice(), product.isSale(),
-                                                                              product.isRecommended(),
-                                                                              product.isOutOfStock(),
-                                                                              product.getPicLocation(),
-                                                                              CategoryJsonResponse.builder()
-                                                                                      .id(String.valueOf(
-                                                                                              product.getCategoryId()))
-                                                                                      .name(product.getCategory()
-                                                                                                    .getName())
-                                                                                      .build()))
-                                      .collect(Collectors.toList()), productPage.getPageable(),
-                              productPage.getTotalElements());
+        return buildProductJsonResponses(productPage);
     }
 
     /**
@@ -133,6 +101,23 @@ public class ProductService {
                                                                 .id(String.valueOf(product.getCategoryId()))
                                                                 .build()))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Get Only Recommended products pagable.
+     *
+     * @return list of recommended products
+     */
+    public Page<ProductJsonResponse> getFilteredRecommendedProducts(Optional<Integer> page, Optional<String> sortBy) {
+        Page<Product> productPage;
+        if (sortBy.isPresent()) {
+            productPage = productRepository.findProductsByRecommendedTrue(
+                    PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC, sortBy.orElse("name")));
+        } else {
+            productPage = productRepository.findProductsByRecommendedTrue(
+                    PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
+        }
+        return buildProductJsonResponses(productPage);
     }
 
     /**
@@ -223,6 +208,11 @@ public class ProductService {
         LOGGER.info("Recommended statue is updated for product with product id {} ", product.getId());
     }
 
+    /**
+     * Make one product out of stock. If it was already out of stock, make it not out of stock.
+     *
+     * @param productId productId
+     */
     public void makeOutOfStockRecommended(final String productId) {
         Product product = productRepository.findById(UUID.fromString(productId))
                 .orElseThrow(ProductNotFoundException::new);
@@ -230,5 +220,31 @@ public class ProductService {
         product.setUpdatedAt(LocalDate.now());
         productRepository.save(product);
         LOGGER.info("Out of stock is updated for product with product id {} ", product.getId());
+    }
+
+    /**
+     * Build product Json reponse.
+     *
+     * @param productPage productPage
+     * @return ProductJsonResponses
+     */
+    private Page<ProductJsonResponse> buildProductJsonResponses(final Page<Product> productPage) {
+        return new PageImpl<>(productPage.getContent()
+                                      .stream()
+                                      .map(product -> new ProductJsonResponse(product.getId(), product.getName(),
+                                                                              product.getPrice(),
+                                                                              product.getDescription(),
+                                                                              product.getOldPrice(), product.isSale(),
+                                                                              product.isRecommended(),
+                                                                              product.isOutOfStock(),
+                                                                              product.getPicLocation(),
+                                                                              CategoryJsonResponse.builder()
+                                                                                      .id(String.valueOf(
+                                                                                              product.getCategoryId()))
+                                                                                      .name(product.getCategory()
+                                                                                                    .getName())
+                                                                                      .build()))
+                                      .collect(Collectors.toList()), productPage.getPageable(),
+                              productPage.getTotalElements());
     }
 }

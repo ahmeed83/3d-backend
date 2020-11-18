@@ -21,7 +21,9 @@ public interface ProductRepository extends PagingAndSortingRepository<Product, U
                                     @Param("categoryName") String categoryName, Pageable pageable);
 
     Page<Product> findProductsByCategory_Id(@Param("categoryId") UUID categoryId, Pageable pageable);
-
+    
+    Page<Product> findProductsByRecommendedTrue(Pageable pageable);
+    
     List<Product> findProductsByRecommendedTrue();
 
     Optional<Product> findProductByNameIgnoreCase(String productName);

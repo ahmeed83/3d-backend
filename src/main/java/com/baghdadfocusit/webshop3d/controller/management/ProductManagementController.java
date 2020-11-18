@@ -88,4 +88,11 @@ public class ProductManagementController {
         productService.updateProductPrice(productId, updatePriceRequest);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
+
+    @GetMapping("recommended")
+    @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
+    public ResponseEntity<Page<ProductJsonResponse>> getFilteredRecommendedProducts(
+            @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
+        return new ResponseEntity<>(productService.getFilteredRecommendedProducts(page, sortBy), HttpStatus.OK);
+    }
 }
