@@ -43,7 +43,7 @@ public class ProductService {
         Page<Product> productPage;
         if (sortBy.isPresent()) {
             productPage = productRepository.findAll(
-                    PageRequest.of(page.orElse(0), 25, Sort.Direction.ASC, sortBy.orElse("name")));
+                    PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC, sortBy.orElse("name")));
         } else {
             productPage = productRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
         }

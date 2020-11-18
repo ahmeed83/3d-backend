@@ -53,7 +53,7 @@ public class CategoryService {
         Page<Category> categoriesPage;
         if (sortBy.isPresent()) {
             categoriesPage = categoryRepository.findAll(
-                    PageRequest.of(page.orElse(0), 25, Sort.Direction.ASC, sortBy.orElse("name")));
+                    PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC, sortBy.orElse("name")));
         } else {
             categoriesPage = categoryRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
         }

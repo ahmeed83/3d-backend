@@ -48,9 +48,9 @@ public class OrderService {
         Page<Order> orderPage;
         if (sortBy.isPresent()) {
             orderPage = orderRepository.findAll(
-                    PageRequest.of(page.orElse(0), 25, Sort.Direction.ASC, sortBy.orElse("name")));
+                    PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC, sortBy.orElse("name")));
         } else {
-            orderPage = orderRepository.findAll(PageRequest.of(page.orElse(0), 25, Sort.unsorted()));
+            orderPage = orderRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
         }
         return new PageImpl<>(orderPage.getContent().stream().map(order -> {
             var orderProductsResponse = order.getOrderItems()
