@@ -175,7 +175,7 @@ public class ProductService {
         product.setUpdatedAt(LocalDate.now());
 
         productRepository.save(product);
-        LOGGER.info("Price is updated for product with product id {} ", product.getId());
+        LOGGER.info("Product is updated for product with product id {} ", product.getId());
     }
 
 

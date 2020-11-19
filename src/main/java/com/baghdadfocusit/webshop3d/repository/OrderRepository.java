@@ -17,8 +17,10 @@ public interface OrderRepository extends CrudRepository<Order, UUID> {
     Page<Order> findOrdersByMobileNumberContainingIgnoreCase(@Param("mobileNumber") Optional<String> mobileNumber,
                                                              Pageable pageable);
 
+    Optional<Order> findOrderByOrderTrackId(String orderTrackId);
+    
     Page<Order> findAll(Pageable pageable);
-
+    
     Optional<List<Order>> findOrdersByMobileNumberIgnoreCase(String mobileNumber);
     
     Optional<Order> findOrderById(UUID orderId);

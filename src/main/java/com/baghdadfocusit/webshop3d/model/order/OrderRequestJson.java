@@ -15,16 +15,18 @@ import java.util.Set;
 @NoArgsConstructor
 public class OrderRequestJson {
 
-    @NotNull
-    private String city;
+    private String orderTrackId;
     @NotNull
     private String name;
     private String companyName;
+    @NotNull
+    private String city;
     @NotNull
     private String district;
     private String district2;
     @NotNull
     private String mobileNumber;
+    private double totalAmount;
     private String email;
     private String notes;
     @NotNull
