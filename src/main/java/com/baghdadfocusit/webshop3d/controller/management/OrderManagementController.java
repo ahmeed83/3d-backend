@@ -40,6 +40,16 @@ public class OrderManagementController {
 
     }
 
+    @GetMapping("search")
+    @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
+    public ResponseEntity<Page<OrderResponseJson>> getFilterOrdersByMobileNumber(
+            @RequestParam Optional<String> mobileNumber, @RequestParam Optional<Integer> page,
+            @RequestParam Optional<String> sortBy) {
+        return new ResponseEntity<>(orderService.getFilterOrdersByMobileNumber(mobileNumber, page, sortBy),
+                                    HttpStatus.OK);
+
+    }
+
     @PostMapping
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
     public ResponseEntity<HttpStatus> updateOrderStatus(

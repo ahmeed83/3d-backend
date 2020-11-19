@@ -22,9 +22,10 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -52,21 +53,25 @@ public class OrderService {
         } else {
             orderPage = orderRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
         }
-        return new PageImpl<>(orderPage.getContent().stream().map(order -> {
-            var orderProductsResponse = order.getOrderItems()
-                    .stream()
-                    .map(orderItem -> new OrderProductsResponse(orderItem.getProduct().getName(),
-                                                                orderItem.getProduct().getPrice(), orderItem.getCount(),
-                                                                orderItem.getAmount()))
-                    .collect(Collectors.toList());
-            return new OrderResponseJson(order.getId(), order.getCreatedAt(), order.getCity(), order.getName(),
-                                         order.getOrderTrackId(), order.getTotalAmount(), order.getOrderState(),
-                                         order.getCompanyName(), order.getDistrict(), order.getDistrict2(),
-                                         order.getMobileNumber(), order.getEmail(), order.getNotes(),
-                                         orderProductsResponse.size(), orderProductsResponse);
-        }).collect(Collectors.toList()), orderPage.getPageable(), orderPage.getTotalElements());
+        return buildOrderResponseJsons(orderPage);
     }
 
+    public Page<OrderResponseJson> getFilterOrdersByMobileNumber(Optional<String> mobileNumber, Optional<Integer> page,
+                                                                 Optional<String> sortBy) {
+        Page<Order> orderPage;
+        if (sortBy.isPresent()) {
+            orderPage = orderRepository.findOrdersByMobileNumberContainingIgnoreCase(mobileNumber,
+                                                                                     PageRequest.of(page.orElse(0), 15,
+                                                                                                    Sort.Direction.ASC,
+                                                                                                    sortBy.orElse(
+                                                                                                            "name")));
+        } else {
+            orderPage = orderRepository.findOrdersByMobileNumberContainingIgnoreCase(mobileNumber,
+                                                                                     PageRequest.of(page.orElse(0), 15,
+                                                                                                    Sort.unsorted()));
+        }
+        return buildOrderResponseJsons(orderPage);
+    }
 
     /**
      * Create order by the customer.
@@ -87,8 +92,7 @@ public class OrderService {
         }
 
         final double totalAmount = products.stream().mapToDouble(Product::getPrice).sum();
-        final Random orderTrackId = new Random();
-        final String format = String.format("3D-" + "%04d", orderTrackId.nextInt(10000));
+        final String format = String.format("3D-" + "%04d", System.currentTimeMillis());
 
         order.setCreatedAt(LocalDate.now());
         order.setOrderState(Order.OrderState.RECEIVED);
@@ -124,10 +128,17 @@ public class OrderService {
                                              .collect(Collectors.toList()));
     }
 
-    public OrderStatusResponse checkStatusOrder(final String orderTrackId) {
-        Order order = orderRepository.findOrderByOrderTrackId(orderTrackId).orElseThrow(OrderNotFoundException::new);
-        LOGGER.info("Order with {} ID is successfully found", orderTrackId);
-        return new OrderStatusResponse(order.getCreatedAt(), order.getName(), order.getOrderState());
+    public List<OrderStatusResponse> checkStatusOrder(final String mobileNumber) {
+        List<Order> orders = orderRepository.findOrdersByMobileNumberIgnoreCase(mobileNumber)
+                .orElseThrow(OrderNotFoundException::new);
+        LOGGER.info("Order with {} ID is successfully found", mobileNumber);
+        List<OrderStatusResponse> orderStatusResponses = new ArrayList<>();
+        for (Order order : orders) {
+            OrderStatusResponse orderStatusResponse = new OrderStatusResponse(order.getCreatedAt(), order.getName(),
+                                                                              order.getOrderState());
+            orderStatusResponses.add(orderStatusResponse);
+        }
+        return orderStatusResponses;
     }
 
     public void updateOrderStatus(final OrderStatusUpdateRequest orderStatusUpdateRequest) {
@@ -136,5 +147,27 @@ public class OrderService {
         order.setOrderState(orderStatusUpdateRequest.getOrderState());
         orderRepository.save(order);
         LOGGER.info("Order with {} ID is updated", orderStatusUpdateRequest.getId());
+    }
+
+    /**
+     * Build the response object.
+     *
+     * @param orderPage orderPage
+     * @return Order Response Jsons
+     */
+    private Page<OrderResponseJson> buildOrderResponseJsons(final Page<Order> orderPage) {
+        return new PageImpl<>(orderPage.getContent().stream().map(order -> {
+            var orderProductsResponse = order.getOrderItems()
+                    .stream()
+                    .map(orderItem -> new OrderProductsResponse(orderItem.getProduct().getName(),
+                                                                orderItem.getProduct().getPrice(), orderItem.getCount(),
+                                                                orderItem.getAmount()))
+                    .collect(Collectors.toList());
+            return new OrderResponseJson(order.getId(), order.getCreatedAt(), order.getCity(), order.getName(),
+                                         order.getOrderTrackId(), order.getTotalAmount(), order.getOrderState(),
+                                         order.getCompanyName(), order.getDistrict(), order.getDistrict2(),
+                                         order.getMobileNumber(), order.getEmail(), order.getNotes(),
+                                         orderProductsResponse.size(), orderProductsResponse);
+        }).collect(Collectors.toList()), orderPage.getPageable(), orderPage.getTotalElements());
     }
 }

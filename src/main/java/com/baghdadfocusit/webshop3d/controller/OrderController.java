@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * Order controller.
  */
@@ -31,8 +33,8 @@ public class OrderController {
         return new ResponseEntity<>(orderService.creatOrder(orderJson), HttpStatus.CREATED);
     }
 
-    @GetMapping("/checkStatus/{orderTrackId}")
-    public ResponseEntity<OrderStatusResponse> checkStatusOrder(@PathVariable final String orderTrackId) {
-        return new ResponseEntity<>(orderService.checkStatusOrder(orderTrackId), HttpStatus.OK);
+    @GetMapping("/checkStatus/{orderMobileNumber}")
+    public ResponseEntity<List<OrderStatusResponse>> checkStatusOrder(@PathVariable final String orderMobileNumber) {
+        return new ResponseEntity<>(orderService.checkStatusOrder(orderMobileNumber), HttpStatus.OK);
     }
 }
