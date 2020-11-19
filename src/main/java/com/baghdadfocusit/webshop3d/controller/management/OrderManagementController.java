@@ -45,6 +45,9 @@ public class OrderManagementController {
     public ResponseEntity<Page<OrderResponseJson>> getFilterOrdersByMobileNumber(
             @RequestParam Optional<String> mobileNumber, @RequestParam Optional<Integer> page,
             @RequestParam Optional<String> sortBy) {
+        if (mobileNumber.isPresent() && mobileNumber.get().length() < 7) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
         return new ResponseEntity<>(orderService.getFilterOrdersByMobileNumber(mobileNumber, page, sortBy),
                                     HttpStatus.OK);
 
