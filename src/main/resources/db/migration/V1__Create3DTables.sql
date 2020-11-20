@@ -44,20 +44,21 @@ CREATE TYPE order_state AS ENUM ('RECEIVED', 'IN_PROGRESS', 'SHIPPED', 'DELIVERE
 
 CREATE TABLE IF NOT EXISTS ORDER3D
 (
-    id             UUID PRIMARY KEY   NOT NULL,
-    created_at     DATE               NOT NULL,
-    updated_at     DATE,
-    total_amount   DOUBLE PRECISION   NOT NULL,
-    order_track_id VARCHAR(20) UNIQUE NOT NULL,
-    order_state    order_state        NOT NULL,
-    company_name   VARCHAR(100),
-    name           VARCHAR(100)       NOT NULL,
-    city           VARCHAR(100)       NOT NULL,
-    district       VARCHAR(100)       NOT NULL,
-    district2      VARCHAR(100),
-    mobile_number  VARCHAR(20)        NOT NULL,
-    email          VARCHAR(200),
-    notes          VARCHAR(500)
+    id               UUID PRIMARY KEY   NOT NULL,
+    created_at       DATE               NOT NULL,
+    updated_at       DATE,
+    total_amount     DOUBLE PRECISION   NOT NULL,
+    order_track_id   VARCHAR(20) UNIQUE NOT NULL,
+    order_state      order_state        NOT NULL,
+    company_name     VARCHAR(100),
+    name             VARCHAR(100)       NOT NULL,
+    city             VARCHAR(100)       NOT NULL,
+    district         VARCHAR(100)       NOT NULL,
+    district2        VARCHAR(100),
+    mobile_number    VARCHAR(20)        NOT NULL,
+    email            VARCHAR(200),
+    notes            VARCHAR(500),
+    extra_info_order VARCHAR(500)
 );
 
 CREATE TABLE order3d_products

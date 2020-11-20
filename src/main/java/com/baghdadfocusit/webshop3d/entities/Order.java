@@ -61,6 +61,7 @@ public class Order extends BaseModel {
     private String mobileNumber;
     private String email;
     private String notes;
+    private String extraInfoOrder;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderItem> products = new HashSet<>();

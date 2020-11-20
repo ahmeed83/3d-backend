@@ -39,6 +39,7 @@ public class OrderResponseJson {
     private String mobileNumber;
     private String email;
     private String notes;
+    private String extraInfoOrder;
     private int itemAmount;
     @NotNull
     private List<OrderProductsResponse> orderProductsResponse;

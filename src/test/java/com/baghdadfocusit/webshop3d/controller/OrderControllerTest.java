@@ -68,7 +68,7 @@ public class OrderControllerTest {
     void setUp() {
         orderResponseJson = new OrderResponseJson(UUID.randomUUID(), LocalDate.now(), "Amsterdam", "somename", "3D-123232", 1200,
                                                   Order.OrderState.RECEIVED, null, "alkaradh", "street 52", "1212121", "email",
-                                                  "notes", 1,
+                                                  "notes",null, 1,
                                                   List.of(new OrderProductsResponse("iPhone 10", 1200, 1, 1)));
         when(orderService.creatOrder(any(OrderRequestJson.class))).thenReturn(orderResponseJson);
     }

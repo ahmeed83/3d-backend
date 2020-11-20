@@ -1,18 +1,16 @@
 package com.baghdadfocusit.webshop3d.service;
 
 import com.baghdadfocusit.webshop3d.entities.Order;
-import com.baghdadfocusit.webshop3d.entities.OrderItem;
 import com.baghdadfocusit.webshop3d.entities.Product;
 import com.baghdadfocusit.webshop3d.exception.order.OrderNotFoundException;
-import com.baghdadfocusit.webshop3d.exception.product.ProductAlreadyExistsException;
 import com.baghdadfocusit.webshop3d.exception.product.ProductNotFoundException;
+import com.baghdadfocusit.webshop3d.model.order.OrderAddExtraInfoRequestJson;
 import com.baghdadfocusit.webshop3d.model.order.OrderProductRequestJson;
 import com.baghdadfocusit.webshop3d.model.order.OrderProductsResponse;
 import com.baghdadfocusit.webshop3d.model.order.OrderRequestJson;
 import com.baghdadfocusit.webshop3d.model.order.OrderResponseJson;
 import com.baghdadfocusit.webshop3d.model.order.OrderStatusResponse;
 import com.baghdadfocusit.webshop3d.model.order.OrderStatusUpdateRequest;
-import com.baghdadfocusit.webshop3d.model.product.ProductJsonRequest;
 import com.baghdadfocusit.webshop3d.repository.OrderRepository;
 import com.baghdadfocusit.webshop3d.repository.ProductRepository;
 import org.slf4j.Logger;
@@ -121,7 +119,7 @@ public class OrderService {
                                      order.getOrderTrackId(), order.getTotalAmount(), order.getOrderState(),
                                      order.getCompanyName(), order.getDistrict(), order.getDistrict2(),
                                      order.getMobileNumber(), order.getEmail(), order.getNotes(),
-                                     order.getProducts().size(), order.getOrderItems()
+                                     order.getExtraInfoOrder(), order.getProducts().size(), order.getOrderItems()
                                              .stream()
                                              .map(orderItem -> new OrderProductsResponse(
                                                      orderItem.getProduct().getName(),
@@ -129,43 +127,22 @@ public class OrderService {
                                                      orderItem.getAmount()))
                                              .collect(Collectors.toList()));
     }
-    
+
     /**
      * Edit one Order
      *
      * @param orderRequest orderRequest
      */
-    public void editOrder(final OrderRequestJson orderRequest) {
-        Order order = orderRepository.findOrderByOrderTrackId(orderRequest.getOrderTrackId())
+    public void addExtraInfoToOrder(final OrderAddExtraInfoRequestJson orderRequest) {
+        Order order = orderRepository.findOrderById(UUID.fromString(orderRequest.getId()))
                 .orElseThrow(OrderNotFoundException::new);
 
-        Set<OrderProductRequestJson> orderedProducts = orderRequest.getOrderedProducts();
-        Set<OrderItem> products = new HashSet<>();
-        for (OrderProductRequestJson orderProductRequest : orderedProducts) {
-            OrderItem orderItem = new OrderItem();
-            Product prd = new Product();
-            prd.setId(UUID.fromString(orderProductRequest.getProductId()));
-            orderItem.setProduct(prd);
-            orderItem.setAmount(orderProductRequest.getProductCount());
-            products.add(orderItem);
-        }
-        order.setProducts(products);
-        
-        order.setName(orderRequest.getName());
-        order.setCompanyName(orderRequest.getCompanyName());
-        order.setDistrict(orderRequest.getDistrict());
-        order.setDistrict2(orderRequest.getDistrict2());
-        order.setMobileNumber(orderRequest.getMobileNumber());
-        order.setEmail(orderRequest.getEmail());
-        order.setCity(orderRequest.getCity());
-        order.setTotalAmount(orderRequest.getTotalAmount());
-        order.setNotes(orderRequest.getNotes());
+        order.setExtraInfoOrder(orderRequest.getExtraInfoOrder());
         order.setUpdatedAt(LocalDate.now());
-
         orderRepository.save(order);
         LOGGER.info("Order is updated for order with order id {} ", order.getId());
     }
-    
+
     public List<OrderStatusResponse> checkStatusOrder(final String mobileNumber) {
         List<Order> orders = orderRepository.findOrdersByMobileNumberIgnoreCase(mobileNumber)
                 .orElseThrow(OrderNotFoundException::new);
@@ -205,7 +182,8 @@ public class OrderService {
                                          order.getOrderTrackId(), order.getTotalAmount(), order.getOrderState(),
                                          order.getCompanyName(), order.getDistrict(), order.getDistrict2(),
                                          order.getMobileNumber(), order.getEmail(), order.getNotes(),
-                                         orderProductsResponse.size(), orderProductsResponse);
+                                         order.getExtraInfoOrder(), orderProductsResponse.size(),
+                                         orderProductsResponse);
         }).collect(Collectors.toList()), orderPage.getPageable(), orderPage.getTotalElements());
     }
 }

@@ -1,16 +1,14 @@
 package com.baghdadfocusit.webshop3d.controller.management;
 
-import com.baghdadfocusit.webshop3d.model.order.OrderRequestJson;
+import com.baghdadfocusit.webshop3d.model.order.OrderAddExtraInfoRequestJson;
 import com.baghdadfocusit.webshop3d.model.order.OrderResponseJson;
 import com.baghdadfocusit.webshop3d.model.order.OrderStatusUpdateRequest;
-import com.baghdadfocusit.webshop3d.model.product.ProductJsonRequest;
 import com.baghdadfocusit.webshop3d.service.OrderService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,9 +56,10 @@ public class OrderManagementController {
     }
 
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
-    @PutMapping()
-    public ResponseEntity<HttpStatus> editProduct(@ModelAttribute @Valid OrderRequestJson orderRequest) {
-        orderService.editOrder(orderRequest);
+    @PutMapping("extra-info")
+    public ResponseEntity<HttpStatus> addExtraInfoToOrder(
+            @RequestBody @Valid OrderAddExtraInfoRequestJson orderRequest) {
+        orderService.addExtraInfoToOrder(orderRequest);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
