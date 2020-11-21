@@ -95,4 +95,16 @@ public class ProductManagementController {
             @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
         return new ResponseEntity<>(productService.getFilteredRecommendedProducts(page, sortBy), HttpStatus.OK);
     }
+
+    @GetMapping("search")
+    @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
+    public ResponseEntity<Page<ProductJsonResponse>> searchProductByName(@RequestParam Optional<String> productName,
+                                                                         @RequestParam Optional<Integer> page,
+                                                                         @RequestParam Optional<String> sortBy) {
+        if (productName.isPresent() && productName.get().length() < 5) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        return new ResponseEntity<>(productService.searchProductByName(productName, page, sortBy), HttpStatus.OK);
+    }
+
 }

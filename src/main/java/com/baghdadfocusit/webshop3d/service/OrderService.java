@@ -57,18 +57,20 @@ public class OrderService {
         return buildOrderResponseJsons(orderPage);
     }
 
-    public Page<OrderResponseJson> getFilterOrdersByMobileNumber(Optional<String> mobileNumber, Optional<Integer> page,
-                                                                 Optional<String> sortBy) {
+    public Page<OrderResponseJson> searchOrderByMobileNumber(Optional<String> mobileNumber, Optional<Integer> page,
+                                                             Optional<String> sortBy) {
         Page<Order> orderPage;
         if (sortBy.isPresent()) {
             orderPage = orderRepository.findOrdersByMobileNumberContainingIgnoreCase(mobileNumber,
-                                                                                     PageRequest.of(page.orElse(0), 15,
+                                                                                     PageRequest.of(page.orElse(0),
+                                                                                                    1000,
                                                                                                     Sort.Direction.ASC,
                                                                                                     sortBy.orElse(
                                                                                                             "name")));
         } else {
             orderPage = orderRepository.findOrdersByMobileNumberContainingIgnoreCase(mobileNumber,
-                                                                                     PageRequest.of(page.orElse(0), 15,
+                                                                                     PageRequest.of(page.orElse(0),
+                                                                                                    1000,
                                                                                                     Sort.unsorted()));
         }
         return buildOrderResponseJsons(orderPage);

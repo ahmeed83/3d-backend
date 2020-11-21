@@ -74,12 +74,12 @@ public class ProductService {
         Page<Product> productPage;
         if (sortBy.isPresent()) {
             productPage = productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
-                                                                      PageRequest.of(page.orElse(0), 15,
+                                                                      PageRequest.of(page.orElse(0), 10,
                                                                                      Sort.Direction.ASC,
                                                                                      sortBy.orElse("name")));
         } else {
             productPage = productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
-                                                                      PageRequest.of(page.orElse(0), 15,
+                                                                      PageRequest.of(page.orElse(0), 10,
                                                                                      Sort.unsorted()));
         }
         return buildProductJsonResponses(productPage);
@@ -246,5 +246,22 @@ public class ProductService {
                                                                                       .build()))
                                       .collect(Collectors.toList()), productPage.getPageable(),
                               productPage.getTotalElements());
+    }
+
+    public Page<ProductJsonResponse> searchProductByName(final Optional<String> productName,
+                                                         final Optional<Integer> page, final Optional<String> sortBy) {
+        Page<Product> productPage;
+        if (sortBy.isPresent()) {
+            productPage = productRepository.findProductsByNameContainingIgnoreCase(productName.orElse("_"),
+                                                                                   PageRequest.of(page.orElse(0), 1000,
+                                                                                                  Sort.Direction.ASC,
+                                                                                                  sortBy.orElse(
+                                                                                                          "name")));
+        } else {
+            productPage = productRepository.findProductsByNameContainingIgnoreCase(productName.orElse("_"),
+                                                                                   PageRequest.of(page.orElse(0), 1000,
+                                                                                                  Sort.unsorted()));
+        }
+        return buildProductJsonResponses(productPage);
     }
 }

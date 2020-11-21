@@ -44,15 +44,13 @@ public class OrderManagementController {
 
     @GetMapping("search")
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
-    public ResponseEntity<Page<OrderResponseJson>> getFilterOrdersByMobileNumber(
+    public ResponseEntity<Page<OrderResponseJson>> searchOrderByMobileNumber(
             @RequestParam Optional<String> mobileNumber, @RequestParam Optional<Integer> page,
             @RequestParam Optional<String> sortBy) {
-        if (mobileNumber.isPresent() && mobileNumber.get().length() < 7) {
+        if (mobileNumber.isPresent() && mobileNumber.get().length() < 5) {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
-        return new ResponseEntity<>(orderService.getFilterOrdersByMobileNumber(mobileNumber, page, sortBy),
-                                    HttpStatus.OK);
-
+        return new ResponseEntity<>(orderService.searchOrderByMobileNumber(mobileNumber, page, sortBy), HttpStatus.OK);
     }
 
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
