@@ -138,7 +138,7 @@ public class ProductService {
                 .categoryId(UUID.fromString(productRequest.getCategoryId()))
                 .price(productRequest.getProductPrice())
                 .oldPrice(productRequest.getProductOldPrice())
-                .outOfStock(false)
+                .outOfStock(productRequest.isOutOfStock())
                 .sale(false)
                 .recommended(productRequest.isRecommended())
                 .description(productRequest.getDescription())
