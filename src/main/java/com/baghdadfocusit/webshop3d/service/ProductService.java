@@ -154,13 +154,16 @@ public class ProductService {
      * @param productRequest productRequest
      */
     public void editProduct(final ProductJsonRequest productRequest) {
-        productRepository.findProductByNameIgnoreCase(productRequest.getProductName()).
-                ifPresent(s -> {
-                    throw new ProductAlreadyExistsException();
-                });
         Product product = productRepository.findById(UUID.fromString(productRequest.getId()))
                 .orElseThrow(ProductNotFoundException::new);
 
+        if (!product.getName().equals(productRequest.getProductName())) {
+            productRepository.findProductByNameIgnoreCase(productRequest.getProductName()).
+                    ifPresent(s -> {
+                        throw new ProductAlreadyExistsException();
+                    });
+        }
+        
         //TODO:final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(productRequest.getProductImage());
         final String imageLink = "imageLink";
         product.setName(productRequest.getProductName());
