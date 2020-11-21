@@ -2,7 +2,7 @@ server:
   port: 5000
 
 app:
-  email: ahmed83@me.com
+  email: 3d.electronics.iraq@gmail.com
   datasource:
     jdbc-url: jdbc:postgresql://localhost/webshop3d
     username: postgres

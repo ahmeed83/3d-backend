@@ -2,6 +2,7 @@ package com.baghdadfocusit.webshop3d.service;
 
 import com.baghdadfocusit.webshop3d.entities.Order;
 import com.baghdadfocusit.webshop3d.entities.Product;
+import com.baghdadfocusit.webshop3d.model.contactus.ContactUsRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -58,6 +59,23 @@ public class EmailService {
                 + " </p>\n<p>Products: " + productSB
                 + " </p>\n<p>Total price: " + order.getTotalAmount()
                 + " </p>\n</body>\n</html>";
+        helper.setText(emailContent, true);
+        javaMailSender.send(msg);
+    }
+
+    @Async
+    void sendEmailToAdminFromContactUsForm(final ContactUsRequest contactUsRequest) throws MessagingException {
+        MimeMessage msg = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(msg, true);
+
+        helper.setTo(InternetAddress.parse(email + "," + contactUsRequest.getSenderEmail()));
+        helper.setSubject("Contact us from: " + contactUsRequest.getSenderName());
+        String emailContent = "<html>\n<body>\n"
+                        + "\n<h3>Customer name: " + contactUsRequest.getSenderName()
+                        + "</h3>\n<h3>Customer email: " + contactUsRequest.getSenderEmail() 
+                        + "</h3>\n<h3>Customer mobile number: " + contactUsRequest.getSenderMobile()
+                        + "</h3>\n<p>Message: " + contactUsRequest.getMessageContent() 
+                        + " </p>\n</body>\n</html>";
         helper.setText(emailContent, true);
         javaMailSender.send(msg);
     }
