@@ -2,6 +2,7 @@ package com.baghdadfocusit.webshop3d.service;
 
 import com.baghdadfocusit.webshop3d.entities.Product;
 import com.baghdadfocusit.webshop3d.exception.product.ProductAlreadyExistsException;
+import com.baghdadfocusit.webshop3d.exception.product.ProductNameLessThan5Exception;
 import com.baghdadfocusit.webshop3d.exception.product.ProductNotFoundException;
 import com.baghdadfocusit.webshop3d.model.category.CategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonRequest;
@@ -131,6 +132,9 @@ public class ProductService {
                 ifPresent(s -> {
                     throw new ProductAlreadyExistsException();
                 });
+        if (productRequest.getProductName().length() < 5) {
+            throw new ProductNameLessThan5Exception();
+        }
         final String imageLink = "imageLink";
         final Product product = Product.builder()
                 .createdAt(LocalDate.now())
@@ -163,7 +167,7 @@ public class ProductService {
                         throw new ProductAlreadyExistsException();
                     });
         }
-        
+
         //TODO:final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(productRequest.getProductImage());
         final String imageLink = "imageLink";
         product.setName(productRequest.getProductName());

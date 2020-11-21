@@ -29,8 +29,7 @@ public class CategoryService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
     private final ImageAwsS3Saver imageAwsS3Saver;
-
-
+    
     /**
      * Get all categories.
      *

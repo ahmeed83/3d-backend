@@ -2,6 +2,7 @@ package com.baghdadfocusit.webshop3d.service;
 
 import com.baghdadfocusit.webshop3d.entities.Order;
 import com.baghdadfocusit.webshop3d.entities.Product;
+import com.baghdadfocusit.webshop3d.exception.order.OrderMobileNotCorrectException;
 import com.baghdadfocusit.webshop3d.exception.order.OrderNotFoundException;
 import com.baghdadfocusit.webshop3d.exception.product.ProductNotFoundException;
 import com.baghdadfocusit.webshop3d.model.order.OrderAddExtraInfoRequestJson;
@@ -13,6 +14,7 @@ import com.baghdadfocusit.webshop3d.model.order.OrderStatusResponse;
 import com.baghdadfocusit.webshop3d.model.order.OrderStatusUpdateRequest;
 import com.baghdadfocusit.webshop3d.repository.OrderRepository;
 import com.baghdadfocusit.webshop3d.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -32,6 +34,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderService.class);
@@ -39,12 +42,6 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final EmailService emailService;
 
-    public OrderService(final OrderRepository orderRepository, final ProductRepository productRepository,
-                        final EmailService emailService) {
-        this.orderRepository = orderRepository;
-        this.productRepository = productRepository;
-        this.emailService = emailService;
-    }
 
     public Page<OrderResponseJson> getFilterOrders(Optional<Integer> page, Optional<String> sortBy) {
         Page<Order> orderPage;
@@ -84,6 +81,10 @@ public class OrderService {
      */
     public OrderResponseJson creatOrder(final OrderRequestJson orderJson) {
 
+        if (orderJson.getMobileNumber().length() != 11) {
+            throw new OrderMobileNotCorrectException();
+        }
+
         Order order = new Order();
         final Set<Product> products = new HashSet<>();
         for (OrderProductRequestJson orderedProduct : orderJson.getOrderedProducts()) {
@@ -114,7 +115,7 @@ public class OrderService {
         try {
             emailService.sendEmailToAdminWithOrder(order, products);
         } catch (MessagingException e) {
-            LOGGER.info("Email failed to be sent", e);
+            LOGGER.info("Email for order failed to be sent", e);
         }
         LOGGER.info("Order is successfully saved with category Id: {}", savedOrder.getId());
         return new OrderResponseJson(order.getId(), order.getCreatedAt(), order.getCity(), order.getName(),
