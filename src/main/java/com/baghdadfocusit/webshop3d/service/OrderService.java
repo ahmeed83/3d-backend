@@ -2,7 +2,6 @@ package com.baghdadfocusit.webshop3d.service;
 
 import com.baghdadfocusit.webshop3d.entities.Order;
 import com.baghdadfocusit.webshop3d.entities.Product;
-import com.baghdadfocusit.webshop3d.exception.order.OrderMobileNotCorrectException;
 import com.baghdadfocusit.webshop3d.exception.order.OrderNotFoundException;
 import com.baghdadfocusit.webshop3d.exception.product.ProductNotFoundException;
 import com.baghdadfocusit.webshop3d.model.order.OrderAddExtraInfoRequestJson;
@@ -80,11 +79,7 @@ public class OrderService {
      * @return order id. The customer can track his order by this ID
      */
     public OrderResponseJson creatOrder(final OrderRequestJson orderJson) {
-
-        if (orderJson.getMobileNumber().length() != 11) {
-            throw new OrderMobileNotCorrectException();
-        }
-
+        
         Order order = new Order();
         final Set<Product> products = new HashSet<>();
         for (OrderProductRequestJson orderedProduct : orderJson.getOrderedProducts()) {
@@ -147,7 +142,7 @@ public class OrderService {
     }
 
     public List<OrderStatusResponse> checkStatusOrder(final String mobileNumber) {
-        List<Order> orders = orderRepository.findOrdersByMobileNumberIgnoreCase(mobileNumber)
+        List<Order> orders = orderRepository.findOrdersByMobileNumber(mobileNumber)
                 .orElseThrow(OrderNotFoundException::new);
         LOGGER.info("Order with {} ID is successfully found", mobileNumber);
         List<OrderStatusResponse> orderStatusResponses = new ArrayList<>();

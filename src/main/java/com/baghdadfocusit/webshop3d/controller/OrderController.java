@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ public class OrderController {
     }
 
     @PostMapping("/add-order")
-    public ResponseEntity<OrderResponseJson> createOrder(@RequestBody OrderRequestJson orderJson) {
+    public ResponseEntity<OrderResponseJson> createOrder(@RequestBody @Valid OrderRequestJson orderJson) {
         return new ResponseEntity<>(orderService.creatOrder(orderJson), HttpStatus.CREATED);
     }
 

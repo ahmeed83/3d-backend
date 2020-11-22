@@ -21,7 +21,7 @@ public interface OrderRepository extends CrudRepository<Order, UUID> {
     
     Page<Order> findAll(Pageable pageable);
     
-    Optional<List<Order>> findOrdersByMobileNumberIgnoreCase(String mobileNumber);
+    Optional<List<Order>> findOrdersByMobileNumber(String mobileNumber);
     
     Optional<Order> findOrderById(UUID orderId);
 }
