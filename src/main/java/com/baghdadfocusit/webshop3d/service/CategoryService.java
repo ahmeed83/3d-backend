@@ -29,7 +29,7 @@ public class CategoryService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
     private final ImageAwsS3Saver imageAwsS3Saver;
-    
+
     /**
      * Get all categories.
      *
@@ -91,7 +91,9 @@ public class CategoryService {
     }
 
     public void editCategory(final CategoryJsonRequest categoryRequest) {
-        //TODO:final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getImg());
+        if (categoryRequest.getImg() != null && !categoryRequest.getImg().isEmpty()) {
+            //TODO:final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getImg());
+        }
         final String imageLink = "imageLink";
         categoryRepository.findCategoryByNameIgnoreCase(categoryRequest.getName()).
                 ifPresent(s -> {
