@@ -40,6 +40,16 @@ CREATE TABLE IF NOT EXISTS PRODUCT
     FOREIGN KEY (category_id) REFERENCES CATEGORY (id)
 );
 
+CREATE TABLE IF NOT EXISTS IMAGE
+(
+    id           UUID PRIMARY KEY NOT NULL,
+    created_at   DATE             NOT NULL,
+    updated_at   DATE,
+    pic_location VARCHAR(500)     NOT NULL,
+    product_id   UUID             NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES PRODUCT (id)
+);
+
 CREATE TYPE order_state AS ENUM ('RECEIVED', 'IN_PROGRESS', 'SHIPPED', 'DELIVERED' , 'COMPLETED');
 
 CREATE TABLE IF NOT EXISTS ORDER3D

@@ -4,9 +4,11 @@ import com.baghdadfocusit.webshop3d.entities.Product;
 import com.baghdadfocusit.webshop3d.exception.product.ProductAlreadyExistsException;
 import com.baghdadfocusit.webshop3d.exception.product.ProductNotFoundException;
 import com.baghdadfocusit.webshop3d.model.category.CategoryJsonResponse;
+import com.baghdadfocusit.webshop3d.model.common.ImageJsonResponse;
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonRequest;
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonResponse;
 import com.baghdadfocusit.webshop3d.model.product.ProductUpdatePriceRequest;
+import com.baghdadfocusit.webshop3d.repository.ImageRepository;
 import com.baghdadfocusit.webshop3d.repository.ProductRepository;
 import com.baghdadfocusit.webshop3d.service.util.ImageAwsS3Saver;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,8 @@ public class ProductService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
 
     private final ProductRepository productRepository;
+
+    private final ImageRepository imageRepository;
 
     private final ImageAwsS3Saver imageAwsS3Saver;
 
@@ -96,7 +100,14 @@ public class ProductService {
                 .map(product -> new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
                                                         product.getDescription(), product.getOldPrice(),
                                                         product.isSale(), product.isRecommended(),
-                                                        product.isOutOfStock(), product.getPicLocation(),
+                                                        product.isOutOfStock(),
+                                                        imageRepository.findImagesByProduct_Id(product.getId())
+                                                                .stream()
+                                                                .map(image -> ImageJsonResponse.builder()
+                                                                        .id(String.valueOf(image.getId()))
+                                                                        .productImage(image.getPicLocation())
+                                                                        .build())
+                                                                .collect(Collectors.toList()), product.getPicLocation(),
                                                         CategoryJsonResponse.builder()
                                                                 .id(String.valueOf(product.getCategoryId()))
                                                                 .build()))
@@ -232,23 +243,24 @@ public class ProductService {
      * @return ProductJsonResponses
      */
     private Page<ProductJsonResponse> buildProductJsonResponses(final Page<Product> productPage) {
-        return new PageImpl<>(productPage.getContent()
-                                      .stream()
-                                      .map(product -> new ProductJsonResponse(product.getId(), product.getName(),
-                                                                              product.getPrice(),
-                                                                              product.getDescription(),
-                                                                              product.getOldPrice(), product.isSale(),
-                                                                              product.isRecommended(),
-                                                                              product.isOutOfStock(),
-                                                                              product.getPicLocation(),
-                                                                              CategoryJsonResponse.builder()
-                                                                                      .id(String.valueOf(
-                                                                                              product.getCategoryId()))
-                                                                                      .name(product.getCategory()
-                                                                                                    .getName())
-                                                                                      .build()))
-                                      .collect(Collectors.toList()), productPage.getPageable(),
-                              productPage.getTotalElements());
+        return new PageImpl<>(productPage.getContent().stream().map(product -> {
+
+            List<ImageJsonResponse> imagesByProductId = imageRepository.findImagesByProduct_Id(product.getId())
+                    .stream()
+                    .map(image -> ImageJsonResponse.builder()
+                            .id(String.valueOf(image.getId()))
+                            .productImage(image.getPicLocation())
+                            .build())
+                    .collect(Collectors.toList());
+
+            return new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
+                                           product.getDescription(), product.getOldPrice(), product.isSale(),
+                                           product.isRecommended(), product.isOutOfStock(), imagesByProductId,
+                                           product.getPicLocation(), CategoryJsonResponse.builder()
+                                                   .id(String.valueOf(product.getCategoryId()))
+                                                   .name(product.getCategory().getName())
+                                                   .build());
+        }).collect(Collectors.toList()), productPage.getPageable(), productPage.getTotalElements());
     }
 
     public Page<ProductJsonResponse> searchProductByName(final Optional<String> productName,
