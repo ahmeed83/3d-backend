@@ -78,8 +78,7 @@ public class ImageAwsS3Saver {
      */
     private void isImage(final MultipartFile productImage) {
         if (!Arrays.asList(IMAGE_JPEG.getMimeType(),
-                           IMAGE_PNG.getMimeType(),
-                           IMAGE_GIF.getMimeType())
+                           IMAGE_PNG.getMimeType())
                 .contains(productImage.getContentType())) {
             throw new IllegalStateException("File must be an Image [" + productImage.getContentType() + "]");
         }

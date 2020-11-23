@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,5 +31,5 @@ public class ProductJsonRequest {
     private boolean sale;
     private boolean outOfStock;
     @NotNull
-    private MultipartFile productImage;
+    private List<MultipartFile> productImage;
 }
