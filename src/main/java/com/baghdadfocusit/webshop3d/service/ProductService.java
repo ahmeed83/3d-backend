@@ -175,7 +175,7 @@ public class ProductService {
                     });
         }
 
-        if (productRequest.getProductImage() != null || !productRequest.getProductImage().isEmpty()) {
+        if (productRequest.getProductImage() != null && !productRequest.getProductImage().isEmpty()) {
             //TODO:final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(productRequest
             // .getProductImage());
         }
