@@ -1,5 +1,6 @@
 package com.baghdadfocusit.webshop3d.service;
 
+import com.baghdadfocusit.webshop3d.entities.Image;
 import com.baghdadfocusit.webshop3d.entities.Product;
 import com.baghdadfocusit.webshop3d.exception.product.ProductAlreadyExistsException;
 import com.baghdadfocusit.webshop3d.exception.product.ProductNotFoundException;
@@ -19,7 +20,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -31,12 +34,10 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
-
     private final ProductRepository productRepository;
-
     private final ImageRepository imageRepository;
-
     private final ImageAwsS3Saver imageAwsS3Saver;
+    private static final String IMAGE_TYPE_NAME = "product";
 
     /**
      * Get All Filtered products.
@@ -136,13 +137,12 @@ public class ProductService {
      *
      * @param productRequest productRequest
      */
+    @Transactional
     public void createProduct(ProductJsonRequest productRequest) {
-        //TODO:final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(productRequest.getProductImage());
         productRepository.findProductByNameIgnoreCase(productRequest.getProductName()).
                 ifPresent(s -> {
                     throw new ProductAlreadyExistsException();
                 });
-        final String imageLink = "imageLink";
         final Product product = Product.builder()
                 .createdAt(LocalDate.now())
                 .name(productRequest.getProductName())
@@ -153,9 +153,18 @@ public class ProductService {
                 .sale(false)
                 .recommended(productRequest.isRecommended())
                 .description(productRequest.getDescription())
-                .picLocation(imageLink)
+                .picLocation("")
                 .build();
         final var savedProduct = productRepository.save(product);
+
+        for (MultipartFile image : productRequest.getProductImages()) {
+            final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME);
+            imageRepository.save(Image.builder()
+                                         .createdAt(LocalDate.now())
+                                         .productId(savedProduct.getId())
+                                         .picLocation(imageLink)
+                                         .build());
+        }
         LOGGER.info("Product is saved with product Id: {}", savedProduct.getId());
     }
 
@@ -164,6 +173,7 @@ public class ProductService {
      *
      * @param productRequest productRequest
      */
+    @Transactional
     public void editProduct(final ProductJsonRequest productRequest) {
         Product product = productRepository.findById(UUID.fromString(productRequest.getId()))
                 .orElseThrow(ProductNotFoundException::new);
@@ -174,12 +184,6 @@ public class ProductService {
                         throw new ProductAlreadyExistsException();
                     });
         }
-
-        if (productRequest.getProductImage() != null && !productRequest.getProductImage().isEmpty()) {
-            //TODO:final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(productRequest
-            // .getProductImage());
-        }
-        final String imageLink = "imageLink";
         product.setName(productRequest.getProductName());
         product.setRecommended(productRequest.isRecommended());
         product.setCategoryId(UUID.fromString(productRequest.getCategoryId()));
@@ -188,11 +192,21 @@ public class ProductService {
         product.setSale(productRequest.isSale());
         product.setOutOfStock(productRequest.isOutOfStock());
         product.setDescription(productRequest.getDescription());
-        product.setPicLocation(imageLink);
+        product.setPicLocation("");
         product.setUpdatedAt(LocalDate.now());
+        final var savedProduct = productRepository.save(product);
 
-        productRepository.save(product);
-        LOGGER.info("Product is updated for product with product id {} ", product.getId());
+        if (productRequest.getProductImages() != null && !productRequest.getProductImages().isEmpty()) {
+            for (MultipartFile image : productRequest.getProductImages()) {
+                final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME);
+                imageRepository.save(Image.builder()
+                                             .createdAt(LocalDate.now())
+                                             .productId(savedProduct.getId())
+                                             .picLocation(imageLink)
+                                             .build());
+            }
+        }
+        LOGGER.info("Product is updated for product with product id {} ", savedProduct.getId());
     }
 
 
@@ -261,7 +275,7 @@ public class ProductService {
                                            product.isRecommended(), product.isOutOfStock(), imagesByProductId,
                                            product.getPicLocation(), CategoryJsonResponse.builder()
                                                    .id(String.valueOf(product.getCategoryId()))
-                                                   .name(product.getCategory().getName())
+                                                   .categoryName(product.getCategory().getName())
                                                    .build());
         }).collect(Collectors.toList()), productPage.getPageable(), productPage.getTotalElements());
     }
