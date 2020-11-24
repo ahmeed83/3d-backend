@@ -17,5 +17,5 @@ public class ImageJsonResponse {
     @NotNull
     private String id;
     @NotBlank
-    private String productImage;    
+    private String productImageLocation;    
 }

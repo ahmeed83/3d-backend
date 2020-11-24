@@ -105,7 +105,7 @@ public class ProductService {
                                                                 .stream()
                                                                 .map(image -> ImageJsonResponse.builder()
                                                                         .id(String.valueOf(image.getId()))
-                                                                        .productImage(image.getPicLocation())
+                                                                        .productImageLocation(image.getPicLocation())
                                                                         .build())
                                                                 .collect(Collectors.toList()), product.getPicLocation(),
                                                         CategoryJsonResponse.builder()
@@ -252,7 +252,7 @@ public class ProductService {
                     .stream()
                     .map(image -> ImageJsonResponse.builder()
                             .id(String.valueOf(image.getId()))
-                            .productImage(image.getPicLocation())
+                            .productImageLocation(image.getPicLocation())
                             .build())
                     .collect(Collectors.toList());
 
