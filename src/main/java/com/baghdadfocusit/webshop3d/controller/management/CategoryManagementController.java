@@ -5,6 +5,7 @@ import com.baghdadfocusit.webshop3d.model.category.CategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.service.CategoryService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,15 +43,17 @@ public class CategoryManagementController {
         return new ResponseEntity<>(categoryService.getFilterCategories(page, sortBy), HttpStatus.OK);
     }
 
-    @PostMapping("/add-category")
+    @PostMapping(path = "/add-category", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces =
+            MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
     public ResponseEntity<HttpStatus> createCategory(@ModelAttribute @Valid CategoryJsonRequest category) {
         categoryService.creatCategory(category);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/update-category")
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
+    @PutMapping(path = "/update-category", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces =
+            MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<HttpStatus> editCategory(@ModelAttribute @Valid CategoryJsonRequest category) {
         categoryService.editCategory(category);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);

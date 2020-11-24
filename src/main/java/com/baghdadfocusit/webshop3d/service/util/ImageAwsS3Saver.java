@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.apache.http.entity.ContentType.IMAGE_GIF;
 import static org.apache.http.entity.ContentType.IMAGE_JPEG;
 import static org.apache.http.entity.ContentType.IMAGE_PNG;
 
@@ -44,11 +43,12 @@ public class ImageAwsS3Saver {
      * @param productImage productImage
      * @return link of the image
      */
-    public String saveImageInAmazonAndGetLink(final MultipartFile productImage) {
+    public String saveImageInAmazonAndGetLink(final MultipartFile productImage, final String imageTypeName) {
         isImage(productImage);
         final Map<String, String> metadata = getMetaData(productImage);
         final String path = String.format("%s", bucket);
-        final String fileName = String.format("%s-%s", UUID.randomUUID(), LocalDateTime.now());
+        final String fileName = String.format(imageTypeName + "-" + productImage.getOriginalFilename() + "-%s-%s",
+                                              UUID.randomUUID(), LocalDateTime.now());
         try {
             LOGGER.info("Uploading image with name= " + fileName);
             amazonFileStore.saveImageInAmazon(path, fileName, Optional.of(metadata), productImage.getInputStream());
@@ -73,13 +73,12 @@ public class ImageAwsS3Saver {
 
     /**
      * Be sure if the multipart is a image.
-     *w
+     * w
+     *
      * @param productImage productImage
      */
     private void isImage(final MultipartFile productImage) {
-        if (!Arrays.asList(IMAGE_JPEG.getMimeType(),
-                           IMAGE_PNG.getMimeType())
-                .contains(productImage.getContentType())) {
+        if (!Arrays.asList(IMAGE_JPEG.getMimeType(), IMAGE_PNG.getMimeType()).contains(productImage.getContentType())) {
             throw new IllegalStateException("File must be an Image [" + productImage.getContentType() + "]");
         }
     }

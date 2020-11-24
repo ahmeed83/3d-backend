@@ -21,7 +21,7 @@ public class CategoryJsonResponse {
     @NotNull
     private String id;
     @NotNull
-    private String name;
+    private String categoryName;
     @NotNull
-    private String img;
+    private String categoryImageLocation;
 }

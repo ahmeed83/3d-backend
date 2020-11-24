@@ -1,0 +1,25 @@
+server:
+  port: 5000
+
+app:
+  email: 3d.electronics.iraq@gmail.com
+  datasource:
+    jdbc-url: jdbc:postgresql://localhost/webshop3d
+    username: postgres
+    password: password
+    pool-size: 30
+
+# AWS S3 configuration
+aws:
+  access_key_id: 'AKIARYTBEZ4TPS3HE6OI'
+  secret_access_key: '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'
+  s3:
+    bucket: '3d-products-images-dev'
+    region: 'eu-central-1'
+
+# JWT configuration
+application:
+  jwt:
+    secretKey: '%?ANZ!yR>%*]hV~,&k!x5z24m7Cw4+<Cc_m-/</N-8?zPLd'
+    tokenPrefix: 'Bearer '
+    tokenExpirationAfterDays: 14

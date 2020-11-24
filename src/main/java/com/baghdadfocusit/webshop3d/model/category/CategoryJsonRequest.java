@@ -16,7 +16,6 @@ public class CategoryJsonRequest {
 
     private String id;
     @NotNull
-    private String name;
-    @NotNull
-    private MultipartFile img;
+    private String categoryName;
+    private MultipartFile categoryImage;
 }

@@ -29,6 +29,7 @@ public class CategoryService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
     private final ImageAwsS3Saver imageAwsS3Saver;
+    private static final String IMAGE_TYPE_NAME = "category";
 
     /**
      * Get all categories.
@@ -71,15 +72,13 @@ public class CategoryService {
      * @return category name created
      */
     public void creatCategory(final CategoryJsonRequest categoryRequest) {
-        //TODO:final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getImg());
-        final String imageLink = "imageLink";
-        categoryRepository.findCategoryByNameIgnoreCase(categoryRequest.getName()).
+        categoryRepository.findCategoryByNameIgnoreCase(categoryRequest.getCategoryName()).
                 ifPresent(s -> {
                     throw new CategoryAlreadyExistsException();
                 });
         final Category category = Category.builder()
-                .name(categoryRequest.getName())
-                .img(imageLink)
+                .name(categoryRequest.getCategoryName())
+                .img(imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getCategoryImage(), IMAGE_TYPE_NAME))
                 .createdAt(LocalDate.now())
                 .build();
         final var savedCategory = categoryRepository.save(category);
@@ -90,20 +89,31 @@ public class CategoryService {
         categoryRepository.deleteById(UUID.fromString(categoryId));
     }
 
+    /**
+     * find if the category in the database
+     * if the name is not the same, then the user want to change it, so search if the changed one
+     * already exists in the database.
+     * if there is an image, save it, otherwise don't do anything.
+     * save the name
+     *
+     * @param categoryRequest categoryRequest
+     */
     public void editCategory(final CategoryJsonRequest categoryRequest) {
-        if (categoryRequest.getImg() != null && !categoryRequest.getImg().isEmpty()) {
-            //TODO:final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getImg());
-        }
-        final String imageLink = "imageLink";
-        categoryRepository.findCategoryByNameIgnoreCase(categoryRequest.getName()).
-                ifPresent(s -> {
-                    throw new CategoryAlreadyExistsException();
-                });
         Category category = categoryRepository.findById(UUID.fromString(categoryRequest.getId()))
                 .orElseThrow(CategoryNotFoundException::new);
-        category.setName(categoryRequest.getName());
-        category.setImg(imageLink);
+        if (!category.getName().equals(categoryRequest.getCategoryName())) {
+            categoryRepository.findCategoryByNameIgnoreCase(categoryRequest.getCategoryName()).
+                    ifPresent(s -> {
+                        throw new CategoryAlreadyExistsException();
+                    });
+        }
+        if (categoryRequest.getCategoryImage() != null && !categoryRequest.getCategoryImage().isEmpty()) {
+            category.setImg(
+                    imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getCategoryImage(), IMAGE_TYPE_NAME));
+        }
+        category.setName(categoryRequest.getCategoryName());
         final var savedCategory = categoryRepository.save(category);
-        LOGGER.info("Category with id: {} is updated with name: {}", savedCategory.getId(), categoryRequest.getName());
+        LOGGER.info("Category with id: {} is updated with name: {}", savedCategory.getId(),
+                    categoryRequest.getCategoryName());
     }
 }
