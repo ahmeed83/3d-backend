@@ -20,6 +20,6 @@ aws:
 # JWT configuration
 application:
   jwt:
-    secretKey: '%?ANZ!yR>%*]hV~,&k!x5z24m7Cw4+<Cc_m-/</N-8?zPLd'
+    secretKey: ENC(kAiWeUmRNeAp5Z6ExN7byeSUHwUWtlL2llIlFG3UTVdCIRLvVIQVaYrYrD6mwU72nZoKGP0Nzc0=)
     tokenPrefix: 'Bearer '
     tokenExpirationAfterDays: 14

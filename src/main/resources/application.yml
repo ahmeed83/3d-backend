@@ -2,6 +2,12 @@ server:
   servlet:
     context-path: /api
 
+jasypt:
+  encryptor:
+    password: "@secretProperty@"
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+    
 spring:
   application:
     name: 3D Webshop
