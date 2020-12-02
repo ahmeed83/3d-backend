@@ -57,7 +57,7 @@ class ProductServiceTest {
         //    assertNotNull(newProduct);
         //    assertNull(newProduct.getUpdatedAt());
         //    assertEquals("iPhone", newProduct.getName());
-        //    assertEquals(LocalDate.now(), newProduct.getCreatedAt());
+        //    assertEquals(LocalDateTime.now(), newProduct.getCreatedAt());
     }
 
 //    @Test

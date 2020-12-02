@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 
@@ -24,11 +24,11 @@ public class ProductDataTest {
   @BeforeEach
   void setUp() {
     productRepository.save(Product.builder()
-                                  .createdAt(LocalDate.now())
+                                  .createdAt(LocalDateTime.now())
                                   .name("iPhone")
                                   .price(200)
                                   .picLocation("location")
-                                  .category(Category.builder().createdAt(LocalDate.now()).name("MacBook").build())
+                                  .category(Category.builder().createdAt(LocalDateTime.now()).name("MacBook").build())
                                   .build());
   }
 

@@ -17,7 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,7 +66,7 @@ public class OrderControllerTest {
 
     @BeforeEach
     void setUp() {
-        orderResponseJson = new OrderResponseJson(UUID.randomUUID(), LocalDate.now(), "Amsterdam", "somename", "3D-123232", 1200,
+        orderResponseJson = new OrderResponseJson(UUID.randomUUID(), LocalDateTime.now(), "Amsterdam", "somename", "3D-123232", 1200,
                                                   Order.OrderState.RECEIVED, null, "alkaradh", "street 52", "1212121", "email",
                                                   "notes",null, 1,
                                                   List.of(new OrderProductsResponse("iPhone 10", 1200, 1, 1)));

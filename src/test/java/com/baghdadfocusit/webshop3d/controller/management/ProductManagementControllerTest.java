@@ -16,7 +16,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.mockito.Mockito.when;
@@ -70,7 +70,7 @@ class ProductManagementControllerTest {
     @BeforeEach
     void setUp() {
         product = Product.builder()
-                .createdAt(LocalDate.now())
+                .createdAt(LocalDateTime.now())
                 .id(TEST_UUID)
                 .name("iPhone")
                 .price(200)

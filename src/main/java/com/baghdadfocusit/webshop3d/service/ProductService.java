@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,13 +45,8 @@ public class ProductService {
      * @return products
      */
     public Page<ProductJsonResponse> getAllFilteredProducts(Optional<Integer> page, Optional<String> sortBy) {
-        Page<Product> productPage;
-        if (sortBy.isPresent()) {
-            productPage = productRepository.findAll(
-                    PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC, sortBy.orElse("name")));
-        } else {
-            productPage = productRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
-        }
+        Page<Product> productPage = productRepository.findAll(
+                PageRequest.of(page.orElse(0), 15, Sort.by("updatedAt").descending()));
         return buildProductJsonResponses(productPage);
     }
 
@@ -76,17 +71,10 @@ public class ProductService {
      */
     public Page<ProductJsonResponse> getProductsByCategoryId(Optional<String> categoryId, Optional<Integer> page,
                                                              Optional<String> sortBy) {
-        Page<Product> productPage;
-        if (sortBy.isPresent()) {
-            productPage = productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
-                                                                      PageRequest.of(page.orElse(0), 10,
-                                                                                     Sort.Direction.ASC,
-                                                                                     sortBy.orElse("name")));
-        } else {
-            productPage = productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
-                                                                      PageRequest.of(page.orElse(0), 10,
-                                                                                     Sort.unsorted()));
-        }
+        Page<Product> productPage = productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
+                                                                                PageRequest.of(page.orElse(0), 10,
+                                                                                               Sort.by("updatedAt")
+                                                                                                       .descending()));
         return buildProductJsonResponses(productPage);
     }
 
@@ -122,13 +110,8 @@ public class ProductService {
      */
     public Page<ProductJsonResponse> getFilteredRecommendedProducts(Optional<Integer> page, Optional<String> sortBy) {
         Page<Product> productPage;
-        if (sortBy.isPresent()) {
-            productPage = productRepository.findProductsByRecommendedTrue(
-                    PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC, sortBy.orElse("name")));
-        } else {
-            productPage = productRepository.findProductsByRecommendedTrue(
-                    PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
-        }
+        productPage = productRepository.findProductsByRecommendedTrue(
+                PageRequest.of(page.orElse(0), 15, Sort.by("updatedAt").descending()));
         return buildProductJsonResponses(productPage);
     }
 
@@ -144,7 +127,8 @@ public class ProductService {
                     throw new ProductAlreadyExistsException();
                 });
         final Product product = Product.builder()
-                .createdAt(LocalDate.now())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .name(productRequest.getProductName())
                 .categoryId(UUID.fromString(productRequest.getCategoryId()))
                 .price(productRequest.getProductPrice())
@@ -160,7 +144,8 @@ public class ProductService {
         for (MultipartFile image : productRequest.getProductImages()) {
             final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME);
             imageRepository.save(Image.builder()
-                                         .createdAt(LocalDate.now())
+                                         .createdAt(LocalDateTime.now())
+                                         .updatedAt(LocalDateTime.now())
                                          .productId(savedProduct.getId())
                                          .picLocation(imageLink)
                                          .build());
@@ -193,14 +178,14 @@ public class ProductService {
         product.setOutOfStock(productRequest.isOutOfStock());
         product.setDescription(productRequest.getDescription());
         product.setPicLocation("");
-        product.setUpdatedAt(LocalDate.now());
+        product.setUpdatedAt(LocalDateTime.now());
         final var savedProduct = productRepository.save(product);
 
         if (productRequest.getProductImages() != null && !productRequest.getProductImages().isEmpty()) {
             for (MultipartFile image : productRequest.getProductImages()) {
                 final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME);
                 imageRepository.save(Image.builder()
-                                             .createdAt(LocalDate.now())
+                                             .createdAt(LocalDateTime.now())
                                              .productId(savedProduct.getId())
                                              .picLocation(imageLink)
                                              .build());
@@ -220,7 +205,6 @@ public class ProductService {
         Product product = productRepository.findById(UUID.fromString(productId))
                 .orElseThrow(ProductNotFoundException::new);
         product.setPrice(updatePriceRequest.getProductPrice());
-        product.setUpdatedAt(LocalDate.now());
         productRepository.save(product);
         LOGGER.info("Price is updated for product with product id {} ", product.getId());
     }
@@ -234,7 +218,6 @@ public class ProductService {
         Product product = productRepository.findById(UUID.fromString(productId))
                 .orElseThrow(ProductNotFoundException::new);
         product.setRecommended(!product.isRecommended());
-        product.setUpdatedAt(LocalDate.now());
         productRepository.save(product);
         LOGGER.info("Recommended statue is updated for product with product id {} ", product.getId());
     }
@@ -248,7 +231,6 @@ public class ProductService {
         Product product = productRepository.findById(UUID.fromString(productId))
                 .orElseThrow(ProductNotFoundException::new);
         product.setOutOfStock(!product.isOutOfStock());
-        product.setUpdatedAt(LocalDate.now());
         productRepository.save(product);
         LOGGER.info("Out of stock is updated for product with product id {} ", product.getId());
     }
@@ -282,18 +264,12 @@ public class ProductService {
 
     public Page<ProductJsonResponse> searchProductByName(final Optional<String> productName,
                                                          final Optional<Integer> page, final Optional<String> sortBy) {
-        Page<Product> productPage;
-        if (sortBy.isPresent()) {
-            productPage = productRepository.findProductsByNameContainingIgnoreCase(productName.orElse("_"),
-                                                                                   PageRequest.of(page.orElse(0), 1000,
-                                                                                                  Sort.Direction.ASC,
-                                                                                                  sortBy.orElse(
-                                                                                                          "name")));
-        } else {
-            productPage = productRepository.findProductsByNameContainingIgnoreCase(productName.orElse("_"),
-                                                                                   PageRequest.of(page.orElse(0), 1000,
-                                                                                                  Sort.unsorted()));
-        }
+        Page<Product> productPage = productRepository.findProductsByNameContainingIgnoreCase(productName.orElse("_"),
+                                                                                             PageRequest.of(
+                                                                                                     page.orElse(0),
+                                                                                                     1000,
+                                                                                                     Sort.by("updatedAt")
+                                                                                                             .descending()));
         return buildProductJsonResponses(productPage);
     }
 }

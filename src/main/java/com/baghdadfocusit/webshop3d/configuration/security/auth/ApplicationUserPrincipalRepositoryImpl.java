@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
@@ -82,7 +82,7 @@ public class ApplicationUserPrincipalRepositoryImpl implements ApplicationUserPr
             throw new PasswordDoesNotMatchException();
         }
         applicationUser.setEnabled(true);
-        applicationUser.setCreatedAt(LocalDate.now());
+        applicationUser.setCreatedAt(LocalDateTime.now());
         applicationUser.setPassword(passwordEncoder.encode(applicationUser.getPassword()));
         applicationUser.setRole(CUSTOMER.getRole());
         userRepository.save(applicationUser);

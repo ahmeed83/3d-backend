@@ -3,8 +3,8 @@
 CREATE TABLE IF NOT EXISTS APPLICATION_USER
 (
     id         UUID PRIMARY KEY    NOT NULL,
-    created_at DATE                NOT NULL,
-    updated_at DATE,
+    created_at TIMESTAMP           NOT NULL,
+    updated_at TIMESTAMP,
     user_name  VARCHAR(100) UNIQUE NOT NULL,
     password   VARCHAR(100)        NOT NULL,
     role       VARCHAR(10)         NOT NULL
@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS APPLICATION_USER
 CREATE TABLE IF NOT EXISTS CATEGORY
 (
     id           UUID PRIMARY KEY    NOT NULL,
-    created_at   DATE                NOT NULL,
-    updated_at   DATE,
+    created_at   TIMESTAMP           NOT NULL,
+    updated_at   TIMESTAMP,
     name         VARCHAR(100) UNIQUE NOT NULL,
     pic_location VARCHAR(500)        NOT NULL
 );
@@ -26,8 +26,8 @@ CREATE TABLE IF NOT EXISTS CATEGORY
 CREATE TABLE IF NOT EXISTS PRODUCT
 (
     id           UUID PRIMARY KEY    NOT NULL,
-    created_at   DATE                NOT NULL,
-    updated_at   DATE,
+    created_at   TIMESTAMP           NOT NULL,
+    updated_at   TIMESTAMP,
     category_id  UUID                NOT NULL,
     name         VARCHAR(300) UNIQUE NOT NULL,
     pic_location VARCHAR(500)        NOT NULL,
@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS PRODUCT
 CREATE TABLE IF NOT EXISTS IMAGE
 (
     id           UUID PRIMARY KEY NOT NULL,
-    created_at   DATE             NOT NULL,
-    updated_at   DATE,
+    created_at   TIMESTAMP        NOT NULL,
+    updated_at   TIMESTAMP,
     pic_location VARCHAR(500)     NOT NULL,
     product_id   UUID             NOT NULL,
     FOREIGN KEY (product_id) REFERENCES PRODUCT (id)
@@ -55,8 +55,8 @@ CREATE TYPE order_state AS ENUM ('RECEIVED', 'IN_PROGRESS', 'SHIPPED', 'DELIVERE
 CREATE TABLE IF NOT EXISTS ORDER3D
 (
     id               UUID PRIMARY KEY   NOT NULL,
-    created_at       DATE               NOT NULL,
-    updated_at       DATE,
+    created_at       TIMESTAMP          NOT NULL,
+    updated_at       TIMESTAMP,
     total_amount     DOUBLE PRECISION   NOT NULL,
     order_track_id   VARCHAR(20) UNIQUE NOT NULL,
     order_state      order_state        NOT NULL,

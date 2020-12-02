@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,7 +20,7 @@ public class OrderResponseJson {
     @NotNull
     private UUID id;    
     @NotNull
-    private LocalDate localDate;
+    private LocalDateTime localDate;
     @NotNull
     private String city;
     @NotNull

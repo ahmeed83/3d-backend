@@ -16,7 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,13 +50,9 @@ public class CategoryService {
      * @return categories
      */
     public Page<CategoryJsonResponse> getFilterCategories(Optional<Integer> page, Optional<String> sortBy) {
-        Page<Category> categoriesPage;
-        if (sortBy.isPresent()) {
-            categoriesPage = categoryRepository.findAll(
-                    PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC, sortBy.orElse("name")));
-        } else {
-            categoriesPage = categoryRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
-        }
+        Page<Category> categoriesPage = categoryRepository.findAll(
+                PageRequest.of(page.orElse(0), 15, Sort.by("updatedAt").descending()));
+
         return new PageImpl<>(categoriesPage.getContent()
                                       .stream()
                                       .map(category -> new CategoryJsonResponse(category.getId().toString(),
@@ -79,7 +75,8 @@ public class CategoryService {
         final Category category = Category.builder()
                 .name(categoryRequest.getCategoryName())
                 .img(imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getCategoryImage(), IMAGE_TYPE_NAME))
-                .createdAt(LocalDate.now())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
         final var savedCategory = categoryRepository.save(category);
         LOGGER.info("Category is saved with category Id: {}", savedCategory.getId());
@@ -112,6 +109,7 @@ public class CategoryService {
                     imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getCategoryImage(), IMAGE_TYPE_NAME));
         }
         category.setName(categoryRequest.getCategoryName());
+        category.setUpdatedAt(LocalDateTime.now());
         final var savedCategory = categoryRepository.save(category);
         LOGGER.info("Category with id: {} is updated with name: {}", savedCategory.getId(),
                     categoryRequest.getCategoryName());

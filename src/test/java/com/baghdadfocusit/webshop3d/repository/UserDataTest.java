@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,7 +22,7 @@ public class UserDataTest {
   @Test
   void saveUserToDatabase() {
     userRepository.save(ApplicationUser.builder()
-                                       .createdAt(LocalDate.now())
+                                       .createdAt(LocalDateTime.now())
                                        .userName("ahmed")
                                        .password("password")
                                        .passwordConfirm("password")

@@ -15,7 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.containsString;
@@ -59,7 +59,7 @@ public class ProductControllerTest {
 
 //  @BeforeEach
 //  void setUp() {
-//    product = Product.builder().createdAt(LocalDate.now()).name("iPhone").price(200).picLocation("location").build();
+//    product = Product.builder().createdAt(LocalDateTime.now()).name("iPhone").price(200).picLocation("location").build();
 //    when(productService.getFilterProductsByCategoryId(Optional.empty(),
 //                                                      Optional.empty(),
 //                                                      Optional.empty(),

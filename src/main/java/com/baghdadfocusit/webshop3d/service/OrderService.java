@@ -23,7 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -43,32 +43,19 @@ public class OrderService {
 
 
     public Page<OrderResponseJson> getFilterOrders(Optional<Integer> page, Optional<String> sortBy) {
-        Page<Order> orderPage;
-        if (sortBy.isPresent()) {
-            orderPage = orderRepository.findAll(
-                    PageRequest.of(page.orElse(0), 15, Sort.Direction.ASC, sortBy.orElse("name")));
-        } else {
-            orderPage = orderRepository.findAll(PageRequest.of(page.orElse(0), 15, Sort.unsorted()));
-        }
+        Page<Order> orderPage = orderRepository.findAll(
+                PageRequest.of(page.orElse(0), 15, Sort.by("createdAt").descending()));
         return buildOrderResponseJsons(orderPage);
     }
 
     public Page<OrderResponseJson> searchOrderByMobileNumber(Optional<String> mobileNumber, Optional<Integer> page,
                                                              Optional<String> sortBy) {
-        Page<Order> orderPage;
-        if (sortBy.isPresent()) {
-            orderPage = orderRepository.findOrdersByMobileNumberContainingIgnoreCase(mobileNumber,
-                                                                                     PageRequest.of(page.orElse(0),
-                                                                                                    1000,
-                                                                                                    Sort.Direction.ASC,
-                                                                                                    sortBy.orElse(
-                                                                                                            "name")));
-        } else {
-            orderPage = orderRepository.findOrdersByMobileNumberContainingIgnoreCase(mobileNumber,
-                                                                                     PageRequest.of(page.orElse(0),
-                                                                                                    1000,
-                                                                                                    Sort.unsorted()));
-        }
+        Page<Order> orderPage = orderRepository.findOrdersByMobileNumberContainingIgnoreCase(mobileNumber,
+                                                                                             PageRequest.of(
+                                                                                                     page.orElse(0),
+                                                                                                     1000,
+                                                                                                     Sort.by("createdAt")
+                                                                                                             .descending()));
         return buildOrderResponseJsons(orderPage);
     }
 
@@ -79,7 +66,7 @@ public class OrderService {
      * @return order id. The customer can track his order by this ID
      */
     public OrderResponseJson creatOrder(final OrderRequestJson orderJson) {
-        
+
         Order order = new Order();
         final Set<Product> products = new HashSet<>();
         for (OrderProductRequestJson orderedProduct : orderJson.getOrderedProducts()) {
@@ -93,7 +80,8 @@ public class OrderService {
         final double totalAmount = products.stream().mapToDouble(Product::getPrice).sum();
         final String format = String.format("3D-" + "%04d", System.currentTimeMillis());
 
-        order.setCreatedAt(LocalDate.now());
+        order.setCreatedAt(LocalDateTime.now());
+        order.setUpdatedAt(LocalDateTime.now());
         order.setOrderState(Order.OrderState.RECEIVED);
         order.setTotalAmount(totalAmount);
         order.setOrderTrackId(format);
@@ -136,7 +124,7 @@ public class OrderService {
                 .orElseThrow(OrderNotFoundException::new);
 
         order.setExtraInfoOrder(orderRequest.getExtraInfoOrder());
-        order.setUpdatedAt(LocalDate.now());
+        order.setUpdatedAt(LocalDateTime.now());
         orderRepository.save(order);
         LOGGER.info("Order is updated for order with order id {} ", order.getId());
     }
@@ -158,6 +146,7 @@ public class OrderService {
         Order order = orderRepository.findOrderById(UUID.fromString(orderStatusUpdateRequest.getId()))
                 .orElseThrow(OrderNotFoundException::new);
         order.setOrderState(orderStatusUpdateRequest.getOrderState());
+        order.setUpdatedAt(LocalDateTime.now());
         orderRepository.save(order);
         LOGGER.info("Order with {} ID is updated", orderStatusUpdateRequest.getId());
     }

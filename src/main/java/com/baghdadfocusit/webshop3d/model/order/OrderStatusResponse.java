@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class OrderStatusResponse {
 
     @NotNull
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
     @NotNull
     private String name;
     @NotNull
