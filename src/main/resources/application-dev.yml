@@ -11,11 +11,11 @@ app:
 
 # AWS S3 configuration
 aws:
-  access_key_id: 'AKIA25AXLWROZGJI3QHL'
-  secret_access_key: 'CHZejVQM0/rm/2Ub11MxZhlgit rm -r --cached .e1Ik9YLx4+DdyfUWY'
+  access_key_id: ''
+  secret_access_key: ''
   s3:
-    bucket: '3d-products-images'
-    region: 'me-south-1'
+    bucket: ''
+    region: ''
 
 # JWT configuration
 application:

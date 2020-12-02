@@ -1,6 +1,6 @@
 server:
   port: 5000
-
+    
 app:
   email: 3d.electronics.iraq@gmail.com
   datasource:
@@ -11,11 +11,11 @@ app:
 
 # AWS S3 configuration
 aws:
-  access_key_id: 'AKIA25AXLWROZGJI3QHL'
-  secret_access_key: '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'
+  access_key_id: 'AKIARYTBEZ4TP5E6VZZL'
+  secret_access_key: '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'
   s3:
-    bucket: '3d-products-images'
-    region: 'me-south-1'
+    bucket: '3d-products-images-dev'
+    region: 'eu-central-1'
 
 # JWT configuration
 application:
