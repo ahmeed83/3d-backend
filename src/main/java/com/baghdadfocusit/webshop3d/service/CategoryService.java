@@ -6,7 +6,6 @@ import com.baghdadfocusit.webshop3d.exception.category.CategoryNotFoundException
 import com.baghdadfocusit.webshop3d.model.category.CategoryJsonRequest;
 import com.baghdadfocusit.webshop3d.model.category.CategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.repository.CategoryRepository;
-import com.baghdadfocusit.webshop3d.service.util.ImageAwsS3Saver;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +27,7 @@ public class CategoryService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
-    private final ImageAwsS3Saver imageAwsS3Saver;
+    private final ImageAwsS3Service imageAwsS3Saver;
     private static final String IMAGE_TYPE_NAME = "category";
 
     /**
@@ -105,6 +104,7 @@ public class CategoryService {
                     });
         }
         if (categoryRequest.getCategoryImage() != null && !categoryRequest.getCategoryImage().isEmpty()) {
+            imageAwsS3Saver.deleteImage(category.getImg());
             category.setImg(
                     imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getCategoryImage(), IMAGE_TYPE_NAME));
         }

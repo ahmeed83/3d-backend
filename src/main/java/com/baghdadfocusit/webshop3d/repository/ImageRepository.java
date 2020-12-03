@@ -12,4 +12,5 @@ import java.util.UUID;
 public interface ImageRepository extends CrudRepository<Image, UUID> {
 
     List<Image> findImagesByProduct_Id(@Param("productId") UUID productId);
+    void deleteByProduct_Id(@Param("productId") UUID productId);
 }

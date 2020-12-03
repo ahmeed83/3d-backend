@@ -1,4 +1,4 @@
-package com.baghdadfocusit.webshop3d.service.util;
+package com.baghdadfocusit.webshop3d.service;
 
 import com.baghdadfocusit.webshop3d.configuration.aws.AmazonFileStore;
 import org.slf4j.Logger;
@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,21 +18,23 @@ import static org.apache.http.entity.ContentType.IMAGE_JPEG;
 import static org.apache.http.entity.ContentType.IMAGE_PNG;
 
 @Service
-public class ImageAwsS3Saver {
+public class ImageAwsS3Service {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ImageAwsS3Saver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageAwsS3Service.class);
 
     @Value("${aws.s3.bucket}")
     private String bucket;
 
     private final AmazonFileStore amazonFileStore;
 
+    private static final String AWS_S3_URL_LOCATION = "https://3d-products-images-dev.s3.eu-central-1.amazonaws.com/";
+
     /**
      * Constructor
      *
      * @param amazonFileStore amazonFileStore
      */
-    public ImageAwsS3Saver(final AmazonFileStore amazonFileStore) {
+    public ImageAwsS3Service(final AmazonFileStore amazonFileStore) {
         this.amazonFileStore = amazonFileStore;
     }
 
@@ -47,11 +48,12 @@ public class ImageAwsS3Saver {
         isImage(productImage);
         final Map<String, String> metadata = getMetaData(productImage);
         final String path = String.format("%s", bucket);
-        final String fileName = String.format(imageTypeName + "-" + productImage.getOriginalFilename() + "-%s-%s",
-                                              UUID.randomUUID(), LocalDateTime.now());
+
+        final String fileName = String.format("%s/%s", imageTypeName,
+                                              imageTypeName + "-" + productImage.getOriginalFilename() + "-" + UUID.randomUUID());
         try {
             LOGGER.info("Uploading image with name= " + fileName);
-            amazonFileStore.saveImageInAmazon(path, fileName, Optional.of(metadata), productImage.getInputStream());
+            amazonFileStore.saveImageInS3(path, fileName, Optional.of(metadata), productImage.getInputStream());
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -81,5 +83,15 @@ public class ImageAwsS3Saver {
         if (!Arrays.asList(IMAGE_JPEG.getMimeType(), IMAGE_PNG.getMimeType()).contains(productImage.getContentType())) {
             throw new IllegalStateException("File must be an Image [" + productImage.getContentType() + "]");
         }
+    }
+
+    /**
+     * Delete images form S3 bucket.
+     *
+     * @param imageLocationOnS3 full image Url location.
+     */
+    public void deleteImage(final String imageLocationOnS3) {
+        String imageKeyId = imageLocationOnS3.replace(AWS_S3_URL_LOCATION, "");
+        amazonFileStore.deleteImageFromS3(bucket, imageKeyId);
     }
 }

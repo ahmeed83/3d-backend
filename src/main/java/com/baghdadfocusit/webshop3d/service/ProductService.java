@@ -11,7 +11,6 @@ import com.baghdadfocusit.webshop3d.model.product.ProductJsonResponse;
 import com.baghdadfocusit.webshop3d.model.product.ProductUpdatePriceRequest;
 import com.baghdadfocusit.webshop3d.repository.ImageRepository;
 import com.baghdadfocusit.webshop3d.repository.ProductRepository;
-import com.baghdadfocusit.webshop3d.service.util.ImageAwsS3Saver;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ public class ProductService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductService.class);
     private final ProductRepository productRepository;
     private final ImageRepository imageRepository;
-    private final ImageAwsS3Saver imageAwsS3Saver;
+    private final ImageAwsS3Service imageAwsS3Service;
     private static final String IMAGE_TYPE_NAME = "product";
 
     /**
@@ -55,10 +54,16 @@ public class ProductService {
      *
      * @param productId productId
      */
+    @Transactional
     public void deleteProduct(String productId) {
         Product product = productRepository.findById(UUID.fromString(productId))
                 .orElseThrow(ProductNotFoundException::new);
+
+        imageRepository.findImagesByProduct_Id(product.getId())
+                .forEach(image -> imageAwsS3Service.deleteImage(image.getPicLocation()));
+        
         productRepository.deleteById(product.getId());
+        LOGGER.info("Product is delete with product Id: {}", productId);
     }
 
     /**
@@ -142,7 +147,7 @@ public class ProductService {
         final var savedProduct = productRepository.save(product);
 
         for (MultipartFile image : productRequest.getProductImages()) {
-            final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME);
+            final String imageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME);
             imageRepository.save(Image.builder()
                                          .createdAt(LocalDateTime.now())
                                          .updatedAt(LocalDateTime.now())
@@ -182,8 +187,13 @@ public class ProductService {
         final var savedProduct = productRepository.save(product);
 
         if (productRequest.getProductImages() != null && !productRequest.getProductImages().isEmpty()) {
+            imageRepository.findImagesByProduct_Id(product.getId())
+                    .forEach(image -> imageAwsS3Service.deleteImage(image.getPicLocation()));
+
+            imageRepository.deleteByProduct_Id(product.getId());
+            
             for (MultipartFile image : productRequest.getProductImages()) {
-                final String imageLink = imageAwsS3Saver.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME);
+                final String imageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME);
                 imageRepository.save(Image.builder()
                                              .createdAt(LocalDateTime.now())
                                              .productId(savedProduct.getId())

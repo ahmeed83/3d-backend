@@ -2,7 +2,9 @@ package com.baghdadfocusit.webshop3d.configuration.aws;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -22,7 +24,7 @@ public class AmazonFileStore {
      * Get image from AWS bucket.
      *
      * @param bucketName aws bucketName
-     * @param imageKey image key
+     * @param imageKey   image key
      * @return url of the image in AWS
      */
     public String getImageUrl(final String bucketName, final String imageKey) {
@@ -37,10 +39,9 @@ public class AmazonFileStore {
      * @param optionalMetaData image optionalMetaData
      * @param inputStream      image inputStream
      */
-    public void saveImageInAmazon(String path,
-                                  String fileName,
-                                  Optional<Map<String, String>> optionalMetaData,
-                                  InputStream inputStream) {
+    @Async
+    public void saveImageInS3(String path, String fileName, Optional<Map<String, String>> optionalMetaData,
+                              InputStream inputStream) {
         ObjectMetadata metaData = new ObjectMetadata();
         optionalMetaData.ifPresent(map -> {
             if (!map.isEmpty()) {
@@ -52,5 +53,17 @@ public class AmazonFileStore {
         } catch (AmazonServiceException e) {
             throw new IllegalStateException("failed to store content s3", e);
         }
+    }
+
+    /**
+     * Delete image from the Amazon bucket.
+     *
+     * @param bucketName aws bucketName
+     * @param imageKeyId image key id on S3
+     */
+    @Async
+    public void deleteImageFromS3(final String bucketName, final String imageKeyId) {
+        final DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, imageKeyId);
+        amazonS3.deleteObject(deleteObjectRequest);
     }
 }
