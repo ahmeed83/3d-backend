@@ -4,7 +4,7 @@ server:
 app:
   email: 3d.electronics.iraq@gmail.com
   datasource:
-    jdbc-url: jdbc:postgresql://webshop3d.capyw64fpgma.eu-central-1.rds.amazonaws.com:5432/webshop3d
+    jdbc-url: jdbc:postgresql://webshop-3d-db.capyw64fpgma.eu-central-1.rds.amazonaws.com:5432/webshop3d
     username: postgres
     password: postgres57175127242
     pool-size: 30
