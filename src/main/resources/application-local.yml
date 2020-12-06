@@ -23,3 +23,19 @@ application:
     secretKey: ENC(kAiWeUmRNeAp5Z6ExN7byeSUHwUWtlL2llIlFG3UTVdCIRLvVIQVaYrYrD6mwU72nZoKGP0Nzc0=)
     tokenPrefix: 'Bearer '
     tokenExpirationAfterDays: 14
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 3d.electronics.iraq@gmail.com
+    password: ENC(l9YOz0sVpGOEzFXmvSwqyDxRvgIpkdAYf3ikspii/ew=)
+    properties: 
+      mail: 
+        smtp:
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+          starttls:
+            enable: true

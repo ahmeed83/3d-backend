@@ -1,10 +1,41 @@
 server:
-  port: 8080
-
+  port: 5000
+    
 app:
   email: 3d@3d-iraq.com
   datasource:
-    jdbc-url: jdbc:postgresql://db/webshop3d
-    username: postgres
-    password: docker3d
+    jdbc-url: ENC(8sILs9yv+yW+Qc2S+ujbxjLM8GWHrxx34Z0eNhtd3VqEK17htUfTLSqj3RcTMrZGTG6oazhStGgjaN5oK5MCMJDfOGe/FyUvyKmrfferKFfitfnAbGkFIhTS4xzKUnjWgBmQWXXHQ1Q=)
+    username: ENC(SnXSHzlnhzrlE8HLMb3gMWN2rT0VvHxn)
+    password: ENC(wVdHE0ScPKDT54M6yUEmdUB73iVgfvpyQT14Kvkw+RIUjUPlTDOpAw==)
     pool-size: 30
+
+# AWS S3 configuration
+aws:
+  access_key_id: ENC(eqWStuJmMS4G1L7FZ17TnNFTGhov87k2qxkpwriNtlM=)
+  secret_access_key: ENC(YZp7ucNeP/gT/2tE7yH5yqM1HClLgpc1aZP1q0slPWsLt0Gmj02zL3bBmElEFWTXqEtYjYPHfZI=)
+  s3:
+    bucket: ENC(1Or2IJt0D/K6u5jVosq6+rWFtALnBfHoLVflKBUS2xQ=)
+    region: ENC(z2xSNPE0m5JVkERUF09PUWtaeI5iEn7Z)
+
+# JWT configuration
+application:
+  jwt:
+    secretKey: ENC(kAiWeUmRNeAp5Z6ExN7byeSUHwUWtlL2llIlFG3UTVdCIRLvVIQVaYrYrD6mwU72nZoKGP0Nzc0=)
+    tokenPrefix: 'Bearer '
+    tokenExpirationAfterDays: 14
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 3d.electronics.iraq@gmail.com
+    password: ENC(l9YOz0sVpGOEzFXmvSwqyDxRvgIpkdAYf3ikspii/ew=)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+          starttls:
+            enable: true

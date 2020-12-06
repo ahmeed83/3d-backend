@@ -11,7 +11,7 @@
     </parent>
     <groupId>com.baghdadfocusit</groupId>
     <artifactId>webshop3d</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>webshop3d</name>
     <description>3D WEB SHOP</description>
 
