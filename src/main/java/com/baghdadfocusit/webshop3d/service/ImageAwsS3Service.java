@@ -25,9 +25,11 @@ public class ImageAwsS3Service {
     @Value("${aws.s3.bucket}")
     private String bucket;
 
+    @Value("${aws.s3.region}")
+    private String region;
+
     private final AmazonFileStore amazonFileStore;
 
-    private static final String AWS_S3_URL_LOCATION = "https://3d-products-images-dev.s3.eu-central-1.amazonaws.com/";
 
     /**
      * Constructor
@@ -91,7 +93,14 @@ public class ImageAwsS3Service {
      * @param imageLocationOnS3 full image Url location.
      */
     public void deleteImage(final String imageLocationOnS3) {
-        String imageKeyId = imageLocationOnS3.replace(AWS_S3_URL_LOCATION, "");
+        final StringBuilder awsS3UrlLocation = new StringBuilder();
+        awsS3UrlLocation.append("https://");
+        awsS3UrlLocation.append(bucket);
+        awsS3UrlLocation.append(".s3.");
+        awsS3UrlLocation.append(region);
+        awsS3UrlLocation.append(".amazonaws.com/");
+        String imageKeyId = imageLocationOnS3.replace(awsS3UrlLocation, "");
         amazonFileStore.deleteImageFromS3(bucket, imageKeyId);
+        LOGGER.info("Image is deleted with image Id: {}", imageKeyId);
     }
 }
