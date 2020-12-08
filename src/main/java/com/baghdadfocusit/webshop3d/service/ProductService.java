@@ -23,8 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -127,13 +129,14 @@ public class ProductService {
      */
     @Transactional
     public void createProduct(ProductJsonRequest productRequest) {
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(TimeZone.getTimeZone("Asia/Baghdad").toZoneId());
         productRepository.findProductByNameIgnoreCase(productRequest.getProductName()).
                 ifPresent(s -> {
                     throw new ProductAlreadyExistsException();
                 });
         final Product product = Product.builder()
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.from(zonedDateTime))
+                .updatedAt(LocalDateTime.from(zonedDateTime))
                 .name(productRequest.getProductName())
                 .categoryId(UUID.fromString(productRequest.getCategoryId()))
                 .price(productRequest.getProductPrice())
@@ -149,8 +152,8 @@ public class ProductService {
         for (MultipartFile image : productRequest.getProductImages()) {
             final String imageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME);
             imageRepository.save(Image.builder()
-                                         .createdAt(LocalDateTime.now())
-                                         .updatedAt(LocalDateTime.now())
+                                         .createdAt(LocalDateTime.from(zonedDateTime))
+                                         .updatedAt(LocalDateTime.from(zonedDateTime))
                                          .productId(savedProduct.getId())
                                          .picLocation(imageLink)
                                          .build());
@@ -165,6 +168,7 @@ public class ProductService {
      */
     @Transactional
     public void editProduct(final ProductJsonRequest productRequest) {
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(TimeZone.getTimeZone("Asia/Baghdad").toZoneId());
         Product product = productRepository.findById(UUID.fromString(productRequest.getId()))
                 .orElseThrow(ProductNotFoundException::new);
 
@@ -183,7 +187,7 @@ public class ProductService {
         product.setOutOfStock(productRequest.isOutOfStock());
         product.setDescription(productRequest.getDescription());
         product.setPicLocation("");
-        product.setUpdatedAt(LocalDateTime.now());
+        product.setUpdatedAt(LocalDateTime.from(zonedDateTime));
         final var savedProduct = productRepository.save(product);
 
         if (productRequest.getProductImages() != null && !productRequest.getProductImages().isEmpty()) {
@@ -195,7 +199,7 @@ public class ProductService {
             for (MultipartFile image : productRequest.getProductImages()) {
                 final String imageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME);
                 imageRepository.save(Image.builder()
-                                             .createdAt(LocalDateTime.now())
+                                             .createdAt(LocalDateTime.from(zonedDateTime))
                                              .productId(savedProduct.getId())
                                              .picLocation(imageLink)
                                              .build());

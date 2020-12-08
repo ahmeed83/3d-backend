@@ -16,8 +16,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -67,6 +69,7 @@ public class CategoryService {
      * @return category name created
      */
     public void creatCategory(final CategoryJsonRequest categoryRequest) {
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(TimeZone.getTimeZone("Asia/Baghdad").toZoneId());
         categoryRepository.findCategoryByNameIgnoreCase(categoryRequest.getCategoryName()).
                 ifPresent(s -> {
                     throw new CategoryAlreadyExistsException();
@@ -74,8 +77,8 @@ public class CategoryService {
         final Category category = Category.builder()
                 .name(categoryRequest.getCategoryName())
                 .img(imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getCategoryImage(), IMAGE_TYPE_NAME))
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.from(zonedDateTime))
+                .updatedAt(LocalDateTime.from(zonedDateTime))
                 .build();
         final var savedCategory = categoryRepository.save(category);
         LOGGER.info("Category is saved with category Id: {}", savedCategory.getId());
@@ -95,6 +98,7 @@ public class CategoryService {
      * @param categoryRequest categoryRequest
      */
     public void editCategory(final CategoryJsonRequest categoryRequest) {
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(TimeZone.getTimeZone("Asia/Baghdad").toZoneId());
         Category category = categoryRepository.findById(UUID.fromString(categoryRequest.getId()))
                 .orElseThrow(CategoryNotFoundException::new);
         if (!category.getName().equals(categoryRequest.getCategoryName())) {
@@ -109,7 +113,7 @@ public class CategoryService {
                     imageAwsS3Saver.saveImageInAmazonAndGetLink(categoryRequest.getCategoryImage(), IMAGE_TYPE_NAME));
         }
         category.setName(categoryRequest.getCategoryName());
-        category.setUpdatedAt(LocalDateTime.now());
+        category.setUpdatedAt(LocalDateTime.from(zonedDateTime));
         final var savedCategory = categoryRepository.save(category);
         LOGGER.info("Category with id: {} is updated with name: {}", savedCategory.getId(),
                     categoryRequest.getCategoryName());
