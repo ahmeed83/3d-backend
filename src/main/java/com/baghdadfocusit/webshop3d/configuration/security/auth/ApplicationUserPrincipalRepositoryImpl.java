@@ -10,8 +10,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
 
 import static com.baghdadfocusit.webshop3d.configuration.security.auth.ApplicationUserRole.ADMIN;
 import static com.baghdadfocusit.webshop3d.configuration.security.auth.ApplicationUserRole.CUSTOMER;
@@ -75,6 +77,7 @@ public class ApplicationUserPrincipalRepositoryImpl implements ApplicationUserPr
      */
     @Override
     public void saveApplicationUser(ApplicationUser applicationUser) throws UserAuthenticationException {
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(TimeZone.getTimeZone("Asia/Baghdad").toZoneId());
         if (userRepository.findByUserName(applicationUser.getUserName()) != null) {
             throw new UserAlreadyExistsException();
         }
@@ -82,7 +85,7 @@ public class ApplicationUserPrincipalRepositoryImpl implements ApplicationUserPr
             throw new PasswordDoesNotMatchException();
         }
         applicationUser.setEnabled(true);
-        applicationUser.setCreatedAt(LocalDateTime.now());
+        applicationUser.setCreatedAt(LocalDateTime.from(zonedDateTime));
         applicationUser.setPassword(passwordEncoder.encode(applicationUser.getPassword()));
         applicationUser.setRole(CUSTOMER.getRole());
         userRepository.save(applicationUser);
