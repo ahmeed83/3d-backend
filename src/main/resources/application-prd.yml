@@ -14,7 +14,7 @@ aws:
   access_key_id: ENC(eqWStuJmMS4G1L7FZ17TnNFTGhov87k2qxkpwriNtlM=)
   secret_access_key: ENC(YZp7ucNeP/gT/2tE7yH5yqM1HClLgpc1aZP1q0slPWsLt0Gmj02zL3bBmElEFWTXqEtYjYPHfZI=)
   s3:
-    bucket: ENC(1Or2IJt0D/K6u5jVosq6+rWFtALnBfHoLVflKBUS2xQ=)
+    bucket: ENC(4flbxXbftCNopVbDbuUKEgQ8aVn8cK+91gFGmWVSPwA=)
     region: ENC(z2xSNPE0m5JVkERUF09PUWtaeI5iEn7Z)
 
 # JWT configuration
