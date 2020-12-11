@@ -2,6 +2,7 @@ server:
   port: 5000
 
 app:
+  email: 3d.electronics.iraq@gmail.com
   datasource:
     jdbc-url: jdbc:postgresql://db:5432/webshop3d
     username: postgres

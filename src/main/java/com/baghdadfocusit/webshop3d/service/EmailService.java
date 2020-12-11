@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class EmailService {
 
-    @Value("${spring.mail.username}")
+    @Value("${app.email}")
     private String email;
 
     private final JavaMailSender javaMailSender;

@@ -2,6 +2,7 @@ server:
   port: 5000
     
 app:
+  email: 3d@3d-iraq.com
   datasource:
     jdbc-url: ENC(8sILs9yv+yW+Qc2S+ujbxjLM8GWHrxx34Z0eNhtd3VqEK17htUfTLSqj3RcTMrZGTG6oazhStGgjaN5oK5MCMJDfOGe/FyUvyKmrfferKFfitfnAbGkFIhTS4xzKUnjWgBmQWXXHQ1Q=)
     username: ENC(SnXSHzlnhzrlE8HLMb3gMWN2rT0VvHxn)
