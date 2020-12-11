@@ -2,7 +2,6 @@ server:
   port: 5000
 
 app:
-  email: ahmed83@me.com
   datasource:
     jdbc-url: jdbc:postgresql://db:5432/webshop3d
     username: postgres
@@ -11,11 +10,11 @@ app:
 
 # AWS S3 configuration
 aws:
-  access_key_id: ''
-  secret_access_key: ''
+  access_key_id: ENC(eqWStuJmMS4G1L7FZ17TnNFTGhov87k2qxkpwriNtlM=)
+  secret_access_key: ENC(YZp7ucNeP/gT/2tE7yH5yqM1HClLgpc1aZP1q0slPWsLt0Gmj02zL3bBmElEFWTXqEtYjYPHfZI=)
   s3:
-    bucket: ''
-    region: ''
+    bucket: ENC(1Or2IJt0D/K6u5jVosq6+rWFtALnBfHoLVflKBUS2xQ=)
+    region: ENC(z2xSNPE0m5JVkERUF09PUWtaeI5iEn7Z)
 
 # JWT configuration
 application:
@@ -23,3 +22,19 @@ application:
     secretKey: ENC(kAiWeUmRNeAp5Z6ExN7byeSUHwUWtlL2llIlFG3UTVdCIRLvVIQVaYrYrD6mwU72nZoKGP0Nzc0=)
     tokenPrefix: 'Bearer '
     tokenExpirationAfterDays: 14
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 3d.electronics.iraq@gmail.com
+    password: lcncbviwowpztklw
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+          starttls:
+            enable: true
