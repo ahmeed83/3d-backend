@@ -1,4 +1,4 @@
-insert into APPLICATION_USER (id, created_at, updated_at, user_name, password, role, is_enabled) values ('0f3d6661-844c-41ac-845e-7c42729cf0d4', '10/27/2019', null, 'hayder', '{bcrypt}$2y$10$YNSuWB6gOWq3CUvum88ks.CFn1NSxfDP4C0SKzfPx0y3rw2I793By', 'ADMIN', true);
+insert into APPLICATION_USER (id, created_at, updated_at, user_name, password, role, is_enabled) values ('0f3d6661-844c-41ac-845e-7c42729cf1d4', '10/27/2019', null, 'hayder', '{bcrypt}$2y$10$YNSuWB6gOWq3CUvum88ks.CFn1NSxfDP4C0SKzfPx0y3rw2I793By', 'ADMIN', true);
 insert into APPLICATION_USER (id, created_at, updated_at, user_name, password, role, is_enabled) values ('a0b11202-0d42-40bb-9465-3e383cf61b93', '9/26/2019', '4/23/2019', 'ahmed', '{bcrypt}$2y$10$zyCFTnQPlzKlwyzYFeAs6uzDhIBk1bl6Lm7p5cj0Y4P1q.Ov/gBY6', 'ADMIN', true);
 
 insert into CATEGORY (id, created_at, updated_at, name, pic_location) values ('1ab5452a-e116-4a85-9b15-abcbc08af6ff', '2019-03-30T22:29:38Z', '2017-04-12T21:57:47Z', 'العاب', 'http://dummyimage.com/250x250.png/5fa2dd/ffffff');
