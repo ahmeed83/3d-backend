@@ -61,9 +61,10 @@ public class ProductService {
         Product product = productRepository.findById(UUID.fromString(productId))
                 .orElseThrow(ProductNotFoundException::new);
 
+        imageAwsS3Service.deleteImage(product.getPicLocation());
         imageRepository.findImagesByProduct_Id(product.getId())
                 .forEach(image -> imageAwsS3Service.deleteImage(image.getPicLocation()));
-        
+
         productRepository.deleteById(product.getId());
         LOGGER.info("Product is delete with product Id: {}", productId);
     }
@@ -134,6 +135,8 @@ public class ProductService {
                 ifPresent(s -> {
                     throw new ProductAlreadyExistsException();
                 });
+        final String mainImageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(productRequest.getPicLocation(),
+                                                                                   IMAGE_TYPE_NAME);
         final Product product = Product.builder()
                 .createdAt(LocalDateTime.from(zonedDateTime))
                 .updatedAt(LocalDateTime.from(zonedDateTime))
@@ -145,8 +148,9 @@ public class ProductService {
                 .sale(false)
                 .recommended(productRequest.isRecommended())
                 .description(productRequest.getDescription())
-                .picLocation("")
+                .picLocation(mainImageLink)
                 .build();
+        
         final var savedProduct = productRepository.save(product);
 
         for (MultipartFile image : productRequest.getProductImages()) {
@@ -186,8 +190,15 @@ public class ProductService {
         product.setSale(productRequest.isSale());
         product.setOutOfStock(productRequest.isOutOfStock());
         product.setDescription(productRequest.getDescription());
-        product.setPicLocation("");
         product.setUpdatedAt(LocalDateTime.from(zonedDateTime));
+
+        if (productRequest.getPicLocation() != null && !productRequest.getPicLocation().isEmpty()) {
+            imageAwsS3Service.deleteImage(product.getPicLocation());
+            final String mainImageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(productRequest.getPicLocation(),
+                                                                                       IMAGE_TYPE_NAME);
+            product.setPicLocation(mainImageLink);
+        }
+
         final var savedProduct = productRepository.save(product);
 
         if (productRequest.getProductImages() != null && !productRequest.getProductImages().isEmpty()) {
@@ -200,6 +211,7 @@ public class ProductService {
                 final String imageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME);
                 imageRepository.save(Image.builder()
                                              .createdAt(LocalDateTime.from(zonedDateTime))
+                                             .updatedAt(LocalDateTime.from(zonedDateTime))
                                              .productId(savedProduct.getId())
                                              .picLocation(imageLink)
                                              .build());
