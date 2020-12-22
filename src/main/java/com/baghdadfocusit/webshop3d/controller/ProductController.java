@@ -26,11 +26,16 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping
+    @GetMapping("category-id")
     public ResponseEntity<Page<ProductJsonResponse>> getProductsByCategory(@RequestParam Optional<String> categoryId,
                                                                            @RequestParam Optional<Integer> page,
                                                                            @RequestParam Optional<String> sortBy) {
         return new ResponseEntity<>(productService.getProductsByCategoryId(categoryId, page, sortBy), HttpStatus.OK);
+    }
+    
+    @GetMapping("product")
+    public ResponseEntity<ProductJsonResponse> getOneProduct(@RequestParam String productId) {
+        return new ResponseEntity<>(productService.getProductsById(productId), HttpStatus.OK);
     }
 
     @GetMapping("recommended")
