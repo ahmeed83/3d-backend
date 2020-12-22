@@ -134,6 +134,7 @@ public class ProductService {
                                                                 .collect(Collectors.toList()), product.getPicLocation(),
                                                         CategoryJsonResponse.builder()
                                                                 .id(String.valueOf(product.getCategoryId()))
+                                                                .categoryName(product.getCategory().getName())
                                                                 .build()))
                 .collect(Collectors.toList());
     }
