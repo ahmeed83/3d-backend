@@ -68,15 +68,14 @@ public class ProductService {
                         .build())
                 .collect(Collectors.toList());
 
-        var productJsonResponse = new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
-                                                          product.getDescription(), product.getOldPrice(),
-                                                          product.isSale(), product.isRecommended(),
-                                                          product.isOutOfStock(), imagesByProductId,
-                                                          product.getPicLocation(), CategoryJsonResponse.builder()
+        return new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
+                                       product.getDescription(), product.getOldPrice(),
+                                       product.isSale(), product.isRecommended(),
+                                       product.isOutOfStock(), imagesByProductId,
+                                       product.getPicLocation(), CategoryJsonResponse.builder()
                                                                   .id(String.valueOf(product.getCategoryId()))
                                                                   .categoryName(product.getCategory().getName())
                                                                   .build());
-        return productJsonResponse;
     }
 
     /**
