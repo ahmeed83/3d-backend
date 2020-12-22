@@ -52,6 +52,34 @@ public class ProductService {
     }
 
     /**
+     * Get one product
+     *
+     * @param productId productId
+     * @return product
+     */
+    public ProductJsonResponse getProductsById(final String productId) {
+        Product product = productRepository.findById(UUID.fromString(productId))
+                .orElseThrow(ProductNotFoundException::new);
+        List<ImageJsonResponse> imagesByProductId = imageRepository.findImagesByProduct_Id(product.getId())
+                .stream()
+                .map(image -> ImageJsonResponse.builder()
+                        .id(String.valueOf(image.getId()))
+                        .productImageLocation(image.getPicLocation())
+                        .build())
+                .collect(Collectors.toList());
+
+        var productJsonResponse = new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
+                                                          product.getDescription(), product.getOldPrice(),
+                                                          product.isSale(), product.isRecommended(),
+                                                          product.isOutOfStock(), imagesByProductId,
+                                                          product.getPicLocation(), CategoryJsonResponse.builder()
+                                                                  .id(String.valueOf(product.getCategoryId()))
+                                                                  .categoryName(product.getCategory().getName())
+                                                                  .build());
+        return productJsonResponse;
+    }
+
+    /**
      * Delete one product
      *
      * @param productId productId
@@ -150,7 +178,7 @@ public class ProductService {
                 .description(productRequest.getDescription())
                 .picLocation(mainImageLink)
                 .build();
-        
+
         final var savedProduct = productRepository.save(product);
 
         for (MultipartFile image : productRequest.getProductImages()) {
