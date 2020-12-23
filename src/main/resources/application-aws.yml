@@ -2,7 +2,8 @@ server:
   port: 5000
 
 app:
-  email: 3d.electronics.iraq@gmail.com
+  email-contactus: ahmed83@me.com
+  email-order: ahmed83@me.com
   datasource:
     jdbc-url: jdbc:postgresql://webshop-3d-db.capyw64fpgma.eu-central-1.rds.amazonaws.com:5432/webshop3d
     username: postgres
@@ -29,7 +30,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: 3d.electronics.iraq@gmail.com
-    password: ENC(l9YOz0sVpGOEzFXmvSwqyDxRvgIpkdAYf3ikspii/ew=)
+    password: ENC(mEvENzln6UQpprp9V6UL7A+aKnj8vMptN6gtoZfMkBs=)
     properties:
       mail:
         smtp:
