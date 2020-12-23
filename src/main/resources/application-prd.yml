@@ -30,7 +30,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: 3d.electronics.iraq@gmail.com
-    password: ENC(l9YOz0sVpGOEzFXmvSwqyDxRvgIpkdAYf3ikspii/ew=)
+    password: ENC(mEvENzln6UQpprp9V6UL7A+aKnj8vMptN6gtoZfMkBs=)
     properties:
       mail:
         smtp:
