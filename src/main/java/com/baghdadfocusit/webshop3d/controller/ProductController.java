@@ -47,6 +47,9 @@ public class ProductController {
     public ResponseEntity<Page<ProductJsonResponse>> searchProductByName(@RequestParam Optional<String> productName,
                                                                          @RequestParam Optional<Integer> page,
                                                                          @RequestParam Optional<String> sortBy) {
+        if (productName.isPresent() && productName.get().length() < 3) {
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
         return new ResponseEntity<>(productService.searchProductByName(productName, page, sortBy), HttpStatus.OK);
     }
 }
