@@ -321,7 +321,7 @@ public class ProductService {
         Page<Product> productPage = productRepository.findProductsByNameContainingIgnoreCase(productName.orElse("_"),
                                                                                              PageRequest.of(
                                                                                                      page.orElse(0),
-                                                                                                     1000,
+                                                                                                     15,
                                                                                                      Sort.by("updatedAt")
                                                                                                              .descending()));
         return buildProductJsonResponses(productPage);
