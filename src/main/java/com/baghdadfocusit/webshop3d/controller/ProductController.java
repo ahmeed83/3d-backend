@@ -32,7 +32,7 @@ public class ProductController {
                                                                            @RequestParam Optional<String> sortBy) {
         return new ResponseEntity<>(productService.getProductsByCategoryId(categoryId, page, sortBy), HttpStatus.OK);
     }
-    
+
     @GetMapping("product")
     public ResponseEntity<ProductJsonResponse> getOneProduct(@RequestParam String productId) {
         return new ResponseEntity<>(productService.getProductsById(productId), HttpStatus.OK);
@@ -41,5 +41,12 @@ public class ProductController {
     @GetMapping("recommended")
     public ResponseEntity<List<ProductJsonResponse>> getRecommendedProducts() {
         return new ResponseEntity<>(productService.getRecommendedProducts(), HttpStatus.OK);
+    }
+
+    @GetMapping("search")
+    public ResponseEntity<Page<ProductJsonResponse>> searchProductByName(@RequestParam Optional<String> productName,
+                                                                         @RequestParam Optional<Integer> page,
+                                                                         @RequestParam Optional<String> sortBy) {
+        return new ResponseEntity<>(productService.searchProductByName(productName, page, sortBy), HttpStatus.OK);
     }
 }
