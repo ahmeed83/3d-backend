@@ -107,7 +107,7 @@ public class ProductService {
     public Page<ProductJsonResponse> getProductsByCategoryId(Optional<String> categoryId, Optional<Integer> page,
                                                              Optional<String> sortBy) {
         Page<Product> productPage = productRepository.findProductsByCategory_Id(UUID.fromString(categoryId.orElse("_")),
-                                                                                PageRequest.of(page.orElse(0), 10,
+                                                                                PageRequest.of(page.orElse(0), 9,
                                                                                                Sort.by("updatedAt")
                                                                                                        .descending()));
         return buildProductJsonResponses(productPage);
@@ -321,7 +321,7 @@ public class ProductService {
         Page<Product> productPage = productRepository.findProductsByNameContainingIgnoreCase(productName.orElse("_"),
                                                                                              PageRequest.of(
                                                                                                      page.orElse(0),
-                                                                                                     15,
+                                                                                                     9,
                                                                                                      Sort.by("updatedAt")
                                                                                                              .descending()));
         return buildProductJsonResponses(productPage);
