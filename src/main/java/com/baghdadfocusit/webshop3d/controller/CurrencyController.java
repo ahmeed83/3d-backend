@@ -1,6 +1,6 @@
 package com.baghdadfocusit.webshop3d.controller;
 
-import com.baghdadfocusit.webshop3d.service.CurrencyService;
+import com.baghdadfocusit.webshop3d.service.currency.CurrencyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

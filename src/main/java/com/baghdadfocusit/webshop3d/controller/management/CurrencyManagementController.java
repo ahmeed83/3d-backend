@@ -1,6 +1,6 @@
 package com.baghdadfocusit.webshop3d.controller.management;
 
-import com.baghdadfocusit.webshop3d.service.CurrencyService;
+import com.baghdadfocusit.webshop3d.service.currency.CurrencyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class CurrencyManagementController {
 
     private static final String HAS_ROLE_ADMIN_AND_EMPLOYEE = "hasAnyRole('ROLE_ADMIN, ROLE_EMPLOYEE')";
-
     private final CurrencyService currencyService;
 
     public CurrencyManagementController(CurrencyService currencyService) {
