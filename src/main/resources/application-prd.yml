@@ -17,6 +17,9 @@ aws:
   s3:
     bucket: ENC(4flbxXbftCNopVbDbuUKEgQ8aVn8cK+91gFGmWVSPwA=)
     region: ENC(z2xSNPE0m5JVkERUF09PUWtaeI5iEn7Z)
+  dynamo_db:
+    access_key_id: ENC(IXIMJvhCitpBrS/pmGBLacPScTemkTn9UvDZ67IoWv0=)
+    secret_access_key: ENC(pedEx1IAGLMEzShdKLqbCV6+Bcsbvh8b+Vc+KSTLqGKN3qWn/XpPdRq3jPX+RWeKCzQnKoi0fWE=)
 
 # JWT configuration
 application:
