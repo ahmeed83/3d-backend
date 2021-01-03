@@ -26,6 +26,7 @@ public class ProductJsonRequest {
     @NotNull
     private double productPrice;
     private double productOldPrice;
+    private double priceAssemble;
     private String description;
     private boolean recommended;
     private boolean sale;

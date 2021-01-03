@@ -68,14 +68,13 @@ public class ProductService {
                         .build())
                 .collect(Collectors.toList());
 
-        return new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
-                                       product.getDescription(), product.getOldPrice(),
-                                       product.isSale(), product.isRecommended(), product.isOnlyShopAvailable(),
-                                       product.isOutOfStock(), imagesByProductId,
-                                       product.getPicLocation(), CategoryJsonResponse.builder()
-                                                                  .id(String.valueOf(product.getCategoryId()))
-                                                                  .categoryName(product.getCategory().getName())
-                                                                  .build());
+        return new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(), product.getOldPrice(),
+                                       product.getPriceAssemble(), product.getDescription(), product.isSale(),
+                                       product.isRecommended(), product.isOnlyShopAvailable(), product.isOutOfStock(),
+                                       imagesByProductId, product.getPicLocation(), CategoryJsonResponse.builder()
+                                               .id(String.valueOf(product.getCategoryId()))
+                                               .categoryName(product.getCategory().getName())
+                                               .build());
     }
 
     /**
@@ -122,9 +121,10 @@ public class ProductService {
         return productRepository.findProductsByRecommendedTrue()
                 .stream()
                 .map(product -> new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
-                                                        product.getDescription(), product.getOldPrice(),
-                                                        product.isSale(), product.isRecommended(),
-                                                        product.isOutOfStock(), product.isOnlyShopAvailable(),
+                                                        product.getOldPrice(), product.getPriceAssemble(),
+                                                        product.getDescription(), product.isSale(),
+                                                        product.isRecommended(), product.isOutOfStock(),
+                                                        product.isOnlyShopAvailable(),
                                                         imageRepository.findImagesByProduct_Id(product.getId())
                                                                 .stream()
                                                                 .map(image -> ImageJsonResponse.builder()
@@ -172,6 +172,7 @@ public class ProductService {
                 .categoryId(UUID.fromString(productRequest.getCategoryId()))
                 .price(productRequest.getProductPrice())
                 .oldPrice(productRequest.getProductOldPrice())
+                .priceAssemble(productRequest.getPriceAssemble())
                 .outOfStock(productRequest.isOutOfStock())
                 .sale(false)
                 .recommended(productRequest.isRecommended())
@@ -216,6 +217,7 @@ public class ProductService {
         product.setCategoryId(UUID.fromString(productRequest.getCategoryId()));
         product.setPrice(productRequest.getProductPrice());
         product.setOldPrice(productRequest.getProductOldPrice());
+        product.setPriceAssemble(productRequest.getPriceAssemble());
         product.setSale(productRequest.isSale());
         product.setOutOfStock(productRequest.isOutOfStock());
         product.setOnlyShopAvailable(productRequest.isOnlyShopAvailable());
@@ -236,7 +238,7 @@ public class ProductService {
                     .forEach(image -> imageAwsS3Service.deleteImage(image.getPicLocation()));
 
             imageRepository.deleteByProduct_Id(product.getId());
-            
+
             for (MultipartFile image : productRequest.getProductImages()) {
                 final String imageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME);
                 imageRepository.save(Image.builder()
@@ -322,10 +324,9 @@ public class ProductService {
                     .collect(Collectors.toList());
 
             return new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
-                                           product.getDescription(), product.getOldPrice(), product.isSale(),
-                                           product.isRecommended(), product.isOutOfStock(),
-                                           product.isOnlyShopAvailable(), imagesByProductId,
-                                           product.getPicLocation(), 
+                                          product.getOldPrice(), product.getPriceAssemble(), product.getDescription(),
+                                           product.isSale(), product.isRecommended(), product.isOutOfStock(),
+                                           product.isOnlyShopAvailable(), imagesByProductId, product.getPicLocation(),
                                            CategoryJsonResponse.builder()
                                                    .id(String.valueOf(product.getCategoryId()))
                                                    .categoryName(product.getCategory().getName())
@@ -337,8 +338,7 @@ public class ProductService {
                                                          final Optional<Integer> page, final Optional<String> sortBy) {
         Page<Product> productPage = productRepository.findProductsByNameContainingIgnoreCase(productName.orElse("_"),
                                                                                              PageRequest.of(
-                                                                                                     page.orElse(0),
-                                                                                                     9,
+                                                                                                     page.orElse(0), 9,
                                                                                                      Sort.by("updatedAt")
                                                                                                              .descending()));
         return buildProductJsonResponses(productPage);

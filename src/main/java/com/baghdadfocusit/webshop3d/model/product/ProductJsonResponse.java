@@ -24,8 +24,9 @@ public class ProductJsonResponse {
     private String name;
     @NotNull
     private double price;
-    private String description;
     private double oldPrice;
+    private double priceAssemble;
+    private String description;
     private boolean sale;
     private boolean recommended;
     private boolean outOfStock;

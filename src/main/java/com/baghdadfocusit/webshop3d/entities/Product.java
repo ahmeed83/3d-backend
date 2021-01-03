@@ -33,6 +33,7 @@ public class Product extends BaseModel {
     @NotNull
     private double price;
     private double oldPrice;
+    private double priceAssemble;
     private String description;
     private boolean outOfStock;
     private boolean onlyShopAvailable;
