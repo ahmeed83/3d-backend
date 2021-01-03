@@ -29,6 +29,7 @@ public class ProductJsonResponse {
     private boolean sale;
     private boolean recommended;
     private boolean outOfStock;
+    private boolean onlyShopAvailable;
     private List<ImageJsonResponse> imageJsonResponses;
     @NotNull
     private String picLocation;

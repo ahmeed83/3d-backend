@@ -70,7 +70,7 @@ public class ProductService {
 
         return new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
                                        product.getDescription(), product.getOldPrice(),
-                                       product.isSale(), product.isRecommended(),
+                                       product.isSale(), product.isRecommended(), product.isOnlyShopAvailable(),
                                        product.isOutOfStock(), imagesByProductId,
                                        product.getPicLocation(), CategoryJsonResponse.builder()
                                                                   .id(String.valueOf(product.getCategoryId()))
@@ -124,7 +124,7 @@ public class ProductService {
                 .map(product -> new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
                                                         product.getDescription(), product.getOldPrice(),
                                                         product.isSale(), product.isRecommended(),
-                                                        product.isOutOfStock(),
+                                                        product.isOutOfStock(), product.isOnlyShopAvailable(),
                                                         imageRepository.findImagesByProduct_Id(product.getId())
                                                                 .stream()
                                                                 .map(image -> ImageJsonResponse.builder()
@@ -175,6 +175,7 @@ public class ProductService {
                 .outOfStock(productRequest.isOutOfStock())
                 .sale(false)
                 .recommended(productRequest.isRecommended())
+                .onlyShopAvailable(productRequest.isOnlyShopAvailable())
                 .description(productRequest.getDescription())
                 .picLocation(mainImageLink)
                 .build();
@@ -217,6 +218,7 @@ public class ProductService {
         product.setOldPrice(productRequest.getProductOldPrice());
         product.setSale(productRequest.isSale());
         product.setOutOfStock(productRequest.isOutOfStock());
+        product.setOnlyShopAvailable(productRequest.isOnlyShopAvailable());
         product.setDescription(productRequest.getDescription());
         product.setUpdatedAt(LocalDateTime.from(zonedDateTime));
 
@@ -290,6 +292,19 @@ public class ProductService {
     }
 
     /**
+     * Make only available on shop. Customers can only buy this products on shop
+     *
+     * @param productId productId
+     */
+    public void makeOnlyShopAvailable(final String productId) {
+        Product product = productRepository.findById(UUID.fromString(productId))
+                .orElseThrow(ProductNotFoundException::new);
+        product.setOnlyShopAvailable(!product.isOnlyShopAvailable());
+        productRepository.save(product);
+        LOGGER.info("Only shop available is updated for product with product id {} ", product.getId());
+    }
+
+    /**
      * Build product Json reponse.
      *
      * @param productPage productPage
@@ -308,8 +323,10 @@ public class ProductService {
 
             return new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
                                            product.getDescription(), product.getOldPrice(), product.isSale(),
-                                           product.isRecommended(), product.isOutOfStock(), imagesByProductId,
-                                           product.getPicLocation(), CategoryJsonResponse.builder()
+                                           product.isRecommended(), product.isOutOfStock(),
+                                           product.isOnlyShopAvailable(), imagesByProductId,
+                                           product.getPicLocation(), 
+                                           CategoryJsonResponse.builder()
                                                    .id(String.valueOf(product.getCategoryId()))
                                                    .categoryName(product.getCategory().getName())
                                                    .build());
