@@ -5,9 +5,9 @@ app:
   email-contactus: ahmed83@me.com
   email-order: ahmed83@me.com
   datasource:
-    jdbc-url: jdbc:postgresql://webshop-3d-db.capyw64fpgma.eu-central-1.rds.amazonaws.com:5432/webshop3d
-    username: postgres
-    password: postgres57175127242
+    jdbc-url: ENC(0X7QP5t42RXo/W0NOpF855u9ZFQt16Oe0ylZbR9MlPjLau/kCPPKabnef/+Zn04ZlzCHtRlWZ4VRXCQ1haPpfPPHFc2wlWBBc9hX/ac0KjOkXAxgtBPcD1h2DK1bfUSTQBX5xcXpxuk=)
+    username: ENC(I+6UelmTVFkerKIJVjlzFv/2/g9H41Fc)
+    password: ENC(T7LSZONtn7VK1GjSKP5MsBsQhL+aiSOZhgk0m49rOVA=)
     pool-size: 30
 
 # AWS S3 configuration
@@ -29,6 +29,8 @@ application:
     tokenExpirationAfterDays: 14
 
 spring:
+  flyway:
+    out-of-order: true
   mail:
     host: smtp.gmail.com
     port: 587
@@ -40,6 +42,6 @@ spring:
           auth: true
           connectiontimeout: 5000
           timeout: 5000
-          writetimeout: 5000
+          writetimeout: 500
           starttls:
             enable: true

@@ -30,6 +30,7 @@ public class ProductJsonRequest {
     private boolean recommended;
     private boolean sale;
     private boolean outOfStock;
+    private boolean onlyShopAvailable;
     private MultipartFile picLocation;
     private List<MultipartFile> productImages;
 }

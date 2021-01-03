@@ -35,6 +35,7 @@ public class Product extends BaseModel {
     private double oldPrice;
     private String description;
     private boolean outOfStock;
+    private boolean onlyShopAvailable;
     private boolean sale;
     private boolean recommended;
     

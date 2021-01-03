@@ -74,6 +74,13 @@ public class ProductManagementController {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
+    @GetMapping("make-only-shop-available/{productId}")
+    @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
+    public ResponseEntity<HttpStatus> makeOnlyShopAvailable(@PathVariable String productId) {
+        productService.makeOnlyShopAvailable(productId);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
     @DeleteMapping("{productId}")
     @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
     public ResponseEntity<HttpStatus> deleteProduct(@PathVariable String productId) {
