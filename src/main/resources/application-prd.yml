@@ -29,6 +29,8 @@ application:
     tokenExpirationAfterDays: 14
 
 spring:
+  flyway:
+    out-of-order: true
   mail:
     host: smtp.gmail.com
     port: 587
