@@ -21,6 +21,9 @@ public class EmailService {
 
     @Value("${app.email-contactus}")
     private String contactUsEmail;
+    
+    @Value("${app.email-extra-contactus}")
+    private String extraContactUsEmail;
 
     @Value("${app.email-order}")
     private String orderEmail;
@@ -71,7 +74,11 @@ public class EmailService {
         MimeMessage msg = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(msg, true);
 
-        helper.setTo(InternetAddress.parse(contactUsEmail + "," + contactUsRequest.getSenderEmail()));
+        helper.setTo(InternetAddress.parse(contactUsEmail
+                                                   + ","
+                                                   + extraContactUsEmail
+                                                   + "," 
+                                                   + contactUsRequest.getSenderEmail()));
         helper.setSubject("Contact us from: " + contactUsRequest.getSenderName());
         String emailContent = "<html>\n<body>\n"
                         + "\n<h3>Customer name: " + contactUsRequest.getSenderName()
