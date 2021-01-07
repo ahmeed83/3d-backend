@@ -37,7 +37,7 @@ import java.util.Set;
 )
 public class Order extends BaseModel {
 
-    public enum OrderState {RECEIVED, IN_PROGRESS, SHIPPED, DELIVERED, COMPLETED}
+    public enum OrderState {RECEIVED, IN_PROGRESS, SHIPPED, DELIVERED, COMPLETED, CANCELLED}
 
     @NotNull
     private double totalAmount;

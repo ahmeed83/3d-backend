@@ -1,0 +1,1 @@
+ALTER TYPE order_state ADD VALUE 'CANCELLED';
