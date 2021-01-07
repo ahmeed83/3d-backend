@@ -3,6 +3,7 @@ server:
     
 app:
   email-contactus: ahmed83@me.com
+  email-extra-contactus: ahmed83@me.com
   email-order: ahmed83@me.com
   datasource:
     jdbc-url: jdbc:postgresql://localhost/webshop3d
