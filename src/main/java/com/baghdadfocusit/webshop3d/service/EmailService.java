@@ -64,6 +64,7 @@ public class EmailService {
                 + " </p>\n<p>City: " + order.getCity()
                 + " </p>\n<p>Products: " + productSB
                 + " </p>\n<p>Total price: " + order.getTotalAmount()
+                + " </p>\n<p>Customer note: " + order.getNotes()
                 + " </p>\n</body>\n</html>";
         helper.setText(emailContent, true);
         javaMailSender.send(msg);
