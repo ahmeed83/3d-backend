@@ -60,21 +60,7 @@ public class ProductService {
     public ProductJsonResponse getProductsById(final String productId) {
         Product product = productRepository.findById(UUID.fromString(productId))
                 .orElseThrow(ProductNotFoundException::new);
-        List<ImageJsonResponse> imagesByProductId = imageRepository.findImagesByProduct_Id(product.getId())
-                .stream()
-                .map(image -> ImageJsonResponse.builder()
-                        .id(String.valueOf(image.getId()))
-                        .productImageLocation(image.getPicLocation())
-                        .build())
-                .collect(Collectors.toList());
-
-        return new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(), product.getOldPrice(),
-                                       product.getPriceAssemble(), product.getDescription(), product.isSale(),
-                                       product.isRecommended(), product.isOnlyShopAvailable(), product.isOutOfStock(),
-                                       imagesByProductId, product.getPicLocation(), CategoryJsonResponse.builder()
-                                               .id(String.valueOf(product.getCategoryId()))
-                                               .categoryName(product.getCategory().getName())
-                                               .build());
+        return buildProductJsonResponse(product);
     }
 
     /**
@@ -120,22 +106,7 @@ public class ProductService {
     public List<ProductJsonResponse> getRecommendedProducts() {
         return productRepository.findProductsByRecommendedTrue()
                 .stream()
-                .map(product -> new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
-                                                        product.getOldPrice(), product.getPriceAssemble(),
-                                                        product.getDescription(), product.isSale(),
-                                                        product.isRecommended(), product.isOutOfStock(),
-                                                        product.isOnlyShopAvailable(),
-                                                        imageRepository.findImagesByProduct_Id(product.getId())
-                                                                .stream()
-                                                                .map(image -> ImageJsonResponse.builder()
-                                                                        .id(String.valueOf(image.getId()))
-                                                                        .productImageLocation(image.getPicLocation())
-                                                                        .build())
-                                                                .collect(Collectors.toList()), product.getPicLocation(),
-                                                        CategoryJsonResponse.builder()
-                                                                .id(String.valueOf(product.getCategoryId()))
-                                                                .categoryName(product.getCategory().getName())
-                                                                .build()))
+                .map(this::buildProductJsonResponse)
                 .collect(Collectors.toList());
     }
 
@@ -313,27 +284,19 @@ public class ProductService {
      * @return ProductJsonResponses
      */
     private Page<ProductJsonResponse> buildProductJsonResponses(final Page<Product> productPage) {
-        return new PageImpl<>(productPage.getContent().stream().map(product -> {
-
-            List<ImageJsonResponse> imagesByProductId = imageRepository.findImagesByProduct_Id(product.getId())
-                    .stream()
-                    .map(image -> ImageJsonResponse.builder()
-                            .id(String.valueOf(image.getId()))
-                            .productImageLocation(image.getPicLocation())
-                            .build())
-                    .collect(Collectors.toList());
-
-            return new ProductJsonResponse(product.getId(), product.getName(), product.getPrice(),
-                                          product.getOldPrice(), product.getPriceAssemble(), product.getDescription(),
-                                           product.isSale(), product.isRecommended(), product.isOutOfStock(),
-                                           product.isOnlyShopAvailable(), imagesByProductId, product.getPicLocation(),
-                                           CategoryJsonResponse.builder()
-                                                   .id(String.valueOf(product.getCategoryId()))
-                                                   .categoryName(product.getCategory().getName())
-                                                   .build());
-        }).collect(Collectors.toList()), productPage.getPageable(), productPage.getTotalElements());
+        return new PageImpl<>(productPage.getContent()
+                                      .stream()
+                                      .map(this::buildProductJsonResponse)
+                                      .collect(Collectors.toList()), productPage.getPageable(),
+                              productPage.getTotalElements());
     }
 
+    /**
+     * Search Product By name.
+     *
+     * @param productName productName
+     * @return Page ProductJsonResponse
+     */
     public Page<ProductJsonResponse> searchProductByName(final Optional<String> productName,
                                                          final Optional<Integer> page, final Optional<String> sortBy) {
         Page<Product> productPage = productRepository.findProductsByNameContainingIgnoreCase(productName.orElse("_"),
@@ -342,5 +305,36 @@ public class ProductService {
                                                                                                      Sort.by("updatedAt")
                                                                                                              .descending()));
         return buildProductJsonResponses(productPage);
+    }
+
+    private ProductJsonResponse buildProductJsonResponse(final Product product) {
+        return ProductJsonResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .oldPrice(product.getOldPrice())
+                .priceAssemble(product.getPriceAssemble())
+                .description(product.getDescription())
+                .sale(product.isSale())
+                .recommended(product.isRecommended())
+                .onlyShopAvailable(product.isOnlyShopAvailable())
+                .outOfStock(product.isOutOfStock())
+                .picLocation(product.getPicLocation())
+                .imageJsonResponses(getImageJsonResponse(product.getId()))
+                .category(CategoryJsonResponse.builder()
+                                  .id(String.valueOf(product.getCategoryId()))
+                                  .categoryName(product.getCategory().getName())
+                                  .build())
+                .build();
+    }
+
+    private List<ImageJsonResponse> getImageJsonResponse(final UUID productId) {
+        return imageRepository.findImagesByProduct_Id(productId)
+                .stream()
+                .map(image -> ImageJsonResponse.builder()
+                        .id(String.valueOf(image.getId()))
+                        .productImageLocation(image.getPicLocation())
+                        .build())
+                .collect(Collectors.toList());
     }
 }
