@@ -32,6 +32,8 @@ public class ProductJsonRequest {
     private boolean sale;
     private boolean outOfStock;
     private boolean onlyShopAvailable;
+    private boolean comingSoon;
     private MultipartFile picLocation;
+    private MultipartFile homeScreenPicLocation;
     private List<MultipartFile> productImages;
 }

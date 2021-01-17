@@ -30,6 +30,7 @@ public class Product extends BaseModel {
     private String name;
     @NotNull
     private String picLocation;
+    private String homeScreenPicLocation;
     @NotNull
     private double price;
     private double oldPrice;
@@ -39,6 +40,7 @@ public class Product extends BaseModel {
     private boolean onlyShopAvailable;
     private boolean sale;
     private boolean recommended;
+    private boolean comingSoon;
     
     @JoinColumn(name = "category_id", insertable = false, updatable = false)
     @ManyToOne(targetEntity = Category.class, fetch = FetchType.EAGER)
