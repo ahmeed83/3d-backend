@@ -6,6 +6,7 @@ import com.baghdadfocusit.webshop3d.exception.product.ProductAlreadyExistsExcept
 import com.baghdadfocusit.webshop3d.exception.product.ProductNotFoundException;
 import com.baghdadfocusit.webshop3d.model.category.CategoryJsonResponse;
 import com.baghdadfocusit.webshop3d.model.common.ImageJsonResponse;
+import com.baghdadfocusit.webshop3d.model.product.ProductHomePageImageJsonResponse;
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonRequest;
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonResponse;
 import com.baghdadfocusit.webshop3d.model.product.ProductUpdatePriceRequest;
@@ -38,7 +39,8 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ImageRepository imageRepository;
     private final ImageAwsS3Service imageAwsS3Service;
-    private static final String IMAGE_TYPE_NAME = "product";
+    private static final String IMAGE_TYPE_NAME_PRODUCT = "product";
+    private static final String IMAGE_TYPE_NAME_HOME_SCREEN = "home-screen";
 
     /**
      * Get All Filtered products.
@@ -49,6 +51,21 @@ public class ProductService {
         Page<Product> productPage = productRepository.findAll(
                 PageRequest.of(page.orElse(0), 15, Sort.by("updatedAt").descending()));
         return buildProductJsonResponses(productPage);
+    }
+
+    /**
+     * Get All Home page product Images.
+     *
+     * @return products
+     */
+    public List<ProductHomePageImageJsonResponse> getProductsHomePageImages() {
+        List<Product> productPage = productRepository.findProductsByHomeScreenPicLocationNotNull();
+        return productPage.stream()
+                .map(product -> ProductHomePageImageJsonResponse.builder()
+                        .productId(product.getId())
+                        .productHomeScreenPicLocation(product.getHomeScreenPicLocation())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -135,7 +152,13 @@ public class ProductService {
                     throw new ProductAlreadyExistsException();
                 });
         final String mainImageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(productRequest.getPicLocation(),
-                                                                                   IMAGE_TYPE_NAME);
+                                                                                   IMAGE_TYPE_NAME_PRODUCT);
+        String homeScreenImageLink = null;
+        if (productRequest.getHomeScreenPicLocation() != null && !productRequest.getHomeScreenPicLocation().isEmpty()) {
+            homeScreenImageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(
+                    productRequest.getHomeScreenPicLocation(), IMAGE_TYPE_NAME_HOME_SCREEN);
+        }
+
         final Product product = Product.builder()
                 .createdAt(LocalDateTime.from(zonedDateTime))
                 .updatedAt(LocalDateTime.from(zonedDateTime))
@@ -145,17 +168,19 @@ public class ProductService {
                 .oldPrice(productRequest.getProductOldPrice())
                 .priceAssemble(productRequest.getPriceAssemble())
                 .outOfStock(productRequest.isOutOfStock())
-                .sale(false)
+                .sale(productRequest.isSale())
                 .recommended(productRequest.isRecommended())
                 .onlyShopAvailable(productRequest.isOnlyShopAvailable())
+                .comingSoon(productRequest.isComingSoon())
                 .description(productRequest.getDescription())
                 .picLocation(mainImageLink)
+                .homeScreenPicLocation(homeScreenImageLink)
                 .build();
 
         final var savedProduct = productRepository.save(product);
 
         for (MultipartFile image : productRequest.getProductImages()) {
-            final String imageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME);
+            final String imageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME_PRODUCT);
             imageRepository.save(Image.builder()
                                          .createdAt(LocalDateTime.from(zonedDateTime))
                                          .updatedAt(LocalDateTime.from(zonedDateTime))
@@ -192,14 +217,20 @@ public class ProductService {
         product.setSale(productRequest.isSale());
         product.setOutOfStock(productRequest.isOutOfStock());
         product.setOnlyShopAvailable(productRequest.isOnlyShopAvailable());
+        product.setComingSoon(productRequest.isComingSoon());
         product.setDescription(productRequest.getDescription());
         product.setUpdatedAt(LocalDateTime.from(zonedDateTime));
 
         if (productRequest.getPicLocation() != null && !productRequest.getPicLocation().isEmpty()) {
-            imageAwsS3Service.deleteImage(product.getPicLocation());
             final String mainImageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(productRequest.getPicLocation(),
-                                                                                       IMAGE_TYPE_NAME);
+                                                                                       IMAGE_TYPE_NAME_PRODUCT);
             product.setPicLocation(mainImageLink);
+        }
+
+        if (productRequest.getHomeScreenPicLocation() != null && !productRequest.getHomeScreenPicLocation().isEmpty()) {
+            final String mainImageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(
+                    productRequest.getHomeScreenPicLocation(), IMAGE_TYPE_NAME_HOME_SCREEN);
+            product.setHomeScreenPicLocation(mainImageLink);
         }
 
         final var savedProduct = productRepository.save(product);
@@ -211,7 +242,7 @@ public class ProductService {
             imageRepository.deleteByProduct_Id(product.getId());
 
             for (MultipartFile image : productRequest.getProductImages()) {
-                final String imageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME);
+                final String imageLink = imageAwsS3Service.saveImageInAmazonAndGetLink(image, IMAGE_TYPE_NAME_PRODUCT);
                 imageRepository.save(Image.builder()
                                              .createdAt(LocalDateTime.from(zonedDateTime))
                                              .updatedAt(LocalDateTime.from(zonedDateTime))
@@ -284,11 +315,9 @@ public class ProductService {
      * @return ProductJsonResponses
      */
     private Page<ProductJsonResponse> buildProductJsonResponses(final Page<Product> productPage) {
-        return new PageImpl<>(productPage.getContent()
-                                      .stream()
-                                      .map(this::buildProductJsonResponse)
-                                      .collect(Collectors.toList()), productPage.getPageable(),
-                              productPage.getTotalElements());
+        return new PageImpl<>(
+                productPage.getContent().stream().map(this::buildProductJsonResponse).collect(Collectors.toList()),
+                productPage.getPageable(), productPage.getTotalElements());
     }
 
     /**
@@ -319,6 +348,7 @@ public class ProductService {
                 .recommended(product.isRecommended())
                 .onlyShopAvailable(product.isOnlyShopAvailable())
                 .outOfStock(product.isOutOfStock())
+                .comingSoon(product.isComingSoon())
                 .picLocation(product.getPicLocation())
                 .imageJsonResponses(getImageJsonResponse(product.getId()))
                 .category(CategoryJsonResponse.builder()

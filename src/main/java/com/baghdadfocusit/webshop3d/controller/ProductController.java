@@ -1,5 +1,6 @@
 package com.baghdadfocusit.webshop3d.controller;
 
+import com.baghdadfocusit.webshop3d.model.product.ProductHomePageImageJsonResponse;
 import com.baghdadfocusit.webshop3d.model.product.ProductJsonResponse;
 import com.baghdadfocusit.webshop3d.service.ProductService;
 import org.springframework.data.domain.Page;
@@ -51,5 +52,10 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
         return new ResponseEntity<>(productService.searchProductByName(productName, page, sortBy), HttpStatus.OK);
+    }
+
+    @GetMapping("product-home-screen-images")
+    public ResponseEntity<List<ProductHomePageImageJsonResponse>> getProductsHomePageImages() {
+        return new ResponseEntity<>(productService.getProductsHomePageImages(), HttpStatus.OK);
     }
 }
