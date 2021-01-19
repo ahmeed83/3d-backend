@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("management/v1/currency")
 public class CurrencyManagementController {
 
-    private static final String HAS_ROLE_ADMIN_AND_EMPLOYEE = "hasAnyRole('ROLE_ADMIN, ROLE_EMPLOYEE')";
+    private static final String HAS_ROLE_ADMIN_AND_EMPLOYEE = "hasAnyRole('ROLE_ADMIN')";
     private final CurrencyService currencyService;
 
     public CurrencyManagementController(CurrencyService currencyService) {
