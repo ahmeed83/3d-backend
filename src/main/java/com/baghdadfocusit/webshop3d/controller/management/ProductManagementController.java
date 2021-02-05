@@ -102,4 +102,11 @@ public class ProductManagementController {
             @RequestParam Optional<Integer> page, @RequestParam Optional<String> sortBy) {
         return new ResponseEntity<>(productService.getFilteredRecommendedProducts(page, sortBy), HttpStatus.OK);
     }
+    
+    @DeleteMapping("delete-home-screen-image/{productId}")
+    @PreAuthorize(HAS_ROLE_ADMIN_AND_EMPLOYEE)
+    public ResponseEntity<HttpStatus> deleteHomeScreenImageForProduct(@PathVariable String productId) {
+        productService.deleteHomeScreenImageForProduct(productId);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
 }
