@@ -81,6 +81,20 @@ public class ProductService {
     }
 
     /**
+     * Delete home screen image for product
+     *
+     * @param productId productId
+     */
+    @Transactional
+    public void deleteHomeScreenImageForProduct(String productId) {
+        Product product = productRepository.findById(UUID.fromString(productId))
+                .orElseThrow(ProductNotFoundException::new);
+        productRepository.deleteHomeScreenImageForProduct(product.getId());
+        imageAwsS3Service.deleteImage(product.getHomeScreenPicLocation());
+        LOGGER.info("Home screen Image for Product {} had been deleted", productId);
+    }
+
+    /**
      * Delete one product
      *
      * @param productId productId
@@ -91,6 +105,7 @@ public class ProductService {
                 .orElseThrow(ProductNotFoundException::new);
 
         imageAwsS3Service.deleteImage(product.getPicLocation());
+        imageAwsS3Service.deleteImage(product.getHomeScreenPicLocation());
         imageRepository.findImagesByProduct_Id(product.getId())
                 .forEach(image -> imageAwsS3Service.deleteImage(image.getPicLocation()));
 
@@ -350,6 +365,7 @@ public class ProductService {
                 .outOfStock(product.isOutOfStock())
                 .comingSoon(product.isComingSoon())
                 .picLocation(product.getPicLocation())
+                .homeScreenPicLocation(product.getHomeScreenPicLocation())
                 .imageJsonResponses(getImageJsonResponse(product.getId()))
                 .category(CategoryJsonResponse.builder()
                                   .id(String.valueOf(product.getCategoryId()))

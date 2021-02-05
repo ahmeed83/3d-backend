@@ -35,6 +35,7 @@ public class ProductJsonResponse {
     private List<ImageJsonResponse> imageJsonResponses;
     @NotNull
     private String picLocation;
+    private String homeScreenPicLocation;
     @NotNull
     private CategoryJsonResponse category;
 }

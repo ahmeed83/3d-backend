@@ -3,6 +3,7 @@ package com.baghdadfocusit.webshop3d.repository;
 import com.baghdadfocusit.webshop3d.entities.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -31,4 +32,8 @@ public interface ProductRepository extends PagingAndSortingRepository<Product, U
     Page<Product> findProductsByNameContainingIgnoreCase(@Param("name") String name, Pageable pageable);
 
     List<Product> findProductsByHomeScreenPicLocationNotNull();
+
+    @Modifying
+    @Query("UPDATE Product p SET p.homeScreenPicLocation = NULL where p.id = :productId")
+    void deleteHomeScreenImageForProduct(@Param(value = "productId") UUID productId);
 }
