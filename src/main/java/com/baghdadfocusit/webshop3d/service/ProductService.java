@@ -105,7 +105,9 @@ public class ProductService {
                 .orElseThrow(ProductNotFoundException::new);
 
         imageAwsS3Service.deleteImage(product.getPicLocation());
-        imageAwsS3Service.deleteImage(product.getHomeScreenPicLocation());
+        if (product.getHomeScreenPicLocation() != null) {
+            imageAwsS3Service.deleteImage(product.getHomeScreenPicLocation());
+        }
         imageRepository.findImagesByProduct_Id(product.getId())
                 .forEach(image -> imageAwsS3Service.deleteImage(image.getPicLocation()));
 
