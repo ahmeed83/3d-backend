@@ -2,6 +2,9 @@ server:
   servlet:
     context-path: /api
 
+3d:
+  version: "@project.version@"
+    
 jasypt:
   encryptor:
     password: "@secretProperty@"

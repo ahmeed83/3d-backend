@@ -1,8 +1,5 @@
-# webshop3d
+Webstore application 3D Electroincs - Backend
 ------------------------------------------
-Webstore application 3D Electroincs
-------------------------------------------
-
 
 ------------------------------------------
 To run the application locally:
@@ -18,6 +15,8 @@ To run the application locally:
 
 3. run the class [Webshop3dApplication](src/main/java/com/baghdadfocusit/webshop3d/Webshop3dApplication.java)
 
+4. check application working [http://localhost:5000/api/version](http://localhost:5000/api/version)
+
 ------------------------------------------
 To run the application locally with docker compose:
 ------------------------------------------
@@ -28,6 +27,8 @@ To run the application locally with docker compose:
 2. Run
     ```bash
     docker-compose up
+
+3. check application working [http://localhost:5000/api/version](http://localhost:5000/api/version)
 
 ------------------------------------------
 To push image to docker HUB
