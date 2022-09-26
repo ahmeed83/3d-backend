@@ -1,6 +1,6 @@
 # webshop3d
 ------------------------------------------
-Webstore application 3D Electroincs 
+Webstore application 3D Electroincs
 ------------------------------------------
 
 
@@ -15,8 +15,8 @@ To run the application locally:
 2. Start docker for the database with:
     ```bash
     docker run --name webshop3d -p 5432:5432 -e POSTGRES_DB=webshop3d -e POSTGRES_PASSWORD=password -d postgres:alpine
-   
-3. run the class [Webshop3dApplication](src/main/java/com/baghdadfocusit/webshop3d/Webshop3dApplication.java) 
+
+3. run the class [Webshop3dApplication](src/main/java/com/baghdadfocusit/webshop3d/Webshop3dApplication.java)
 
 ------------------------------------------
 To run the application locally with docker compose:
@@ -28,7 +28,7 @@ To run the application locally with docker compose:
 2. Run
     ```bash
     docker-compose up
-   
+
 ------------------------------------------
 To push image to docker HUB
 ------------------------------------------
