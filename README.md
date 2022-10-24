@@ -31,6 +31,16 @@ To run the application locally with docker compose:
 3. check application working [http://localhost:5000/api/version](http://localhost:5000/api/version)
 
 ------------------------------------------
+To deploy the application on AWS 
+------------------------------------------
+
+1. check if the configuration file exists in .elasticbeanstalk/config
+
+2. Run
+   ```bash
+   eb deploy
+
+------------------------------------------
 To push image to docker HUB
 ------------------------------------------
 - docker build -t 3d-webshop .
