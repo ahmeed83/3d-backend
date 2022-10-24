@@ -22,8 +22,8 @@ public class EmailService {
     @Value("${app.email-contactus}")
     private String contactUsEmail;
     
-    @Value("${app.email-extra-contactus}")
-    private String extraContactUsEmail;
+    @Value("${app.email-employee}")
+    private String emailEmployee;
 
     @Value("${app.email-order}")
     private String orderEmail;
@@ -39,9 +39,9 @@ public class EmailService {
         MimeMessage msg = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(msg, true);
         if (order.getEmail() == null) {
-            helper.setTo(orderEmail);
+            helper.setTo(orderEmail + "," + emailEmployee);
         } else {
-            helper.setTo(InternetAddress.parse(orderEmail + "," + order.getEmail()));
+            helper.setTo(InternetAddress.parse(orderEmail + "," + emailEmployee + "," + order.getEmail()));
         }
         helper.setSubject("3D Order id: " + order.getOrderTrackId());
         List<Product> productList = products.stream()
@@ -77,7 +77,7 @@ public class EmailService {
 
         helper.setTo(InternetAddress.parse(contactUsEmail
                                                    + ","
-                                                   + extraContactUsEmail
+                                                   + emailEmployee
                                                    + "," 
                                                    + contactUsRequest.getSenderEmail()));
         helper.setSubject("Contact us from: " + contactUsRequest.getSenderName());
