@@ -3,7 +3,7 @@ server:
 
 app:
   email-contactus: ahmed83@me.com
-  email-extra-contactus: ahmed83@me.com
+  email-employee: ahmed83@me.com
   email-order: ahmed83@me.com
   datasource:
     jdbc-url: ENC(0X7QP5t42RXo/W0NOpF855u9ZFQt16Oe0ylZbR9MlPjLau/kCPPKabnef/+Zn04ZlzCHtRlWZ4VRXCQ1haPpfPPHFc2wlWBBc9hX/ac0KjOkXAxgtBPcD1h2DK1bfUSTQBX5xcXpxuk=)
@@ -36,7 +36,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: 3d.electronics.iraq@gmail.com
-    password: ENC(a7pCrmsh5/BW5oqczZ/qosu9QQJpJHQtPYpqE8V2nIA=)
+    password: ENC(HsSbfKbrLH0f2zsesqxpCHfYjcgLznlWjr9TkSQELYE=)
     properties:
       mail:
         smtp:

@@ -3,7 +3,7 @@ server:
     
 app:
   email-contactus: ahmed83@me.com
-  email-extra-contactus: aaziz083@gmail.com
+  email-employee: aaziz083@gmail.com
   email-order: ahmed83@me.com
   datasource:
     jdbc-url: jdbc:postgresql://localhost/webshop3d
@@ -36,7 +36,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: 3d.electronics.iraq@gmail.com
-    password: ENC(a7pCrmsh5/BW5oqczZ/qosu9QQJpJHQtPYpqE8V2nIA=)
+    password: ENC(HsSbfKbrLH0f2zsesqxpCHfYjcgLznlWjr9TkSQELYE=)
     properties: 
       mail: 
         smtp:
