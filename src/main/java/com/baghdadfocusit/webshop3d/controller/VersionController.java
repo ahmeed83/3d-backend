@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class VersionController {
 
-    @Value("${3d.version}")
+    @Value("${application.version}")
     private String appVersion;
 
     @GetMapping("version")

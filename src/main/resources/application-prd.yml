@@ -3,7 +3,7 @@ server:
     
 app:
   email-contactus: 3d@3d-iraq.com
-  email-employee: adil.alrassam1993@gmail.com
+  email-employee: "${EMAIL_EMPLOYEE:ahmed83@me.com}"
   email-order: 3d.electronics.iraq@gmail.com
   datasource:
     jdbc-url: ENC(8sILs9yv+yW+Qc2S+ujbxjLM8GWHrxx34Z0eNhtd3VqEK17htUfTLSqj3RcTMrZGTG6oazhStGgjaN5oK5MCMJDfOGe/FyUvyKmrfferKFfitfnAbGkFIhTS4xzKUnjWgBmQWXXHQ1Q=)
